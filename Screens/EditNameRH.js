@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ImageBackground, Alert } from "react-native";
+import { StyleSheet, ImageBackground, Alert, Text } from "react-native";
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import AppFormField from "../components/forms/AppFormField";
@@ -8,15 +8,17 @@ import * as Yup from "yup";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Nom"),
 });
 
 const EditNameRH = ({ currentName, onSave }) => {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState("");
-
   const navigation = useNavigation();
+
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -36,7 +38,7 @@ const EditNameRH = ({ currentName, onSave }) => {
     const { name } = values;
 
     if (!userId) {
-      Alert.alert("Erreur", "ID utilisateur non disponible.");
+      Alert.alert(t("error"), t("userIdUnavailable"));
       return;
     }
 
@@ -50,22 +52,19 @@ const EditNameRH = ({ currentName, onSave }) => {
       );
 
       console.log(response.data);
-      Alert.alert("Succès", "Le nom a été modifié avec succès.");
+      Alert.alert(t("success"), t("nameChangedSuccessfully"));
       navigation.navigate("FonctionaliterUser");
     } catch (error) {
       console.error(error.response ? error.response.data : error);
-      Alert.alert(
-        "Erreur",
-        "Une erreur s'est produite lors de la modification du nom."
-      );
+      Alert.alert(t("error"), t("nameChangeError"));
     }
   };
 
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <Screen style={styles.container}>
         <AppForm
@@ -77,9 +76,9 @@ const EditNameRH = ({ currentName, onSave }) => {
             autoCorrect={false}
             icon="account"
             name="name"
-            placeholder="Nom"
+            placeholder={t("name")}
           />
-          <SubmitButton title="Enregistrer" />
+          <SubmitButton title={t("save")} />
         </AppForm>
       </Screen>
     </ImageBackground>
@@ -89,6 +88,7 @@ const EditNameRH = ({ currentName, onSave }) => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
+    alignContent:"stretch",
     justifyContent: "flex-start",
   },
   container: {

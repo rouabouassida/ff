@@ -13,6 +13,7 @@ import AppForm from "../components/forms/AppForm";
 import SubmitButton from "../components/forms/SubmitButton";
 import AppFormField from "../components/forms/AppFormField";
 import axios from "axios";
+import { useTranslation } from "react-i18next"; // Importation correcte du hook useTranslation pour la traduction
 
 const validationSchema = Yup.object().shape({
   nomPrenom: Yup.string().required().label("Nom et Prénom"),
@@ -22,6 +23,8 @@ const validationSchema = Yup.object().shape({
 });
 
 function SupprimerConge({ navigation }) {
+  const { t } = useTranslation(); // Utilisation correcte du hook useTranslation pour obtenir la fonction de traduction t()
+
   const handleSubmit = async (values) => {
     try {
       // Correction ici : Assurez-vous que la structure de données envoyée correspond à celle attendue par votre API.
@@ -33,12 +36,12 @@ function SupprimerConge({ navigation }) {
       );
 
       console.log(response.data);
-      Alert.alert("Succès", "Congé supprimé avec succès!");
+      Alert.alert(t("successTitle"), t("deleteSuccess")); // Utilisation correcte de la fonction de traduction t() pour traduire les alertes
       navigation.goBack();
     } catch (error) {
       console.error("Erreur lors de la suppression du congé:", error);
       // Amélioration ici : Affichage d'un message d'erreur plus informatif pour l'utilisateur.
-      let errorMessage = "Erreur lors de la suppression du congé.";
+      let errorMessage = t("deleteError");
       if (
         error.response &&
         error.response.data &&
@@ -46,7 +49,7 @@ function SupprimerConge({ navigation }) {
       ) {
         errorMessage = error.response.data.message;
       }
-      Alert.alert("Erreur", errorMessage);
+      Alert.alert(t("errorTitle"), errorMessage); // Utilisation correcte de la fonction de traduction t() pour traduire les alertes
     }
   };
 
@@ -54,7 +57,7 @@ function SupprimerConge({ navigation }) {
     <ImageBackground
       blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Screen style={styles.container}>
@@ -101,19 +104,20 @@ function SupprimerConge({ navigation }) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "flex-start",
-    padding: 20,
+    justifyContent: "center",
+    alignItems: "stretch",
   },
   container: {
     padding: 10,
   },
   title: {
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: 30,
     fontWeight: "bold",
     color: colors.marron,
     fontStyle: "italic",
-    marginTop: 50,
+    marginTop: 260,
+    textAlign: "center",
   },
 });
 

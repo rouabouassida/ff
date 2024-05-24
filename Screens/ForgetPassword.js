@@ -7,6 +7,7 @@ import colors from "../config/colors";
 import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
+import { useTranslation } from "react-i18next"; // Importer la fonction useTranslation pour gérer les traductions
 import { useNavigation } from "@react-navigation/native";
 
 const validationSchema = Yup.object().shape({
@@ -15,6 +16,8 @@ const validationSchema = Yup.object().shape({
 
 function ForgetPassword(props) {
   const navigation = useNavigation();
+  const { t } = useTranslation(); // Utiliser la fonction useTranslation pour obtenir les traductions
+
   const handleSubmit = (values) => {
     axios
       .post("http://192.168.1.15:3000/user/forget-password", {
@@ -32,13 +35,13 @@ function ForgetPassword(props) {
 
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <View style={styles.container}>
-        <Text style={styles.Entete}>Trouvez votre compte</Text>
-        <Text style={styles.text}>Entrer votre adresse mail</Text>
+        <Text style={styles.Entete}>{t("Trouvez votre compte")}</Text>
+        <Text style={styles.text}>{t("Entrer votre adresse mail")}</Text>
         <Formik
           initialValues={{ email: "" }}
           onSubmit={handleSubmit}
@@ -52,7 +55,7 @@ function ForgetPassword(props) {
                 icon="email"
                 keyboardType="email-address"
                 name="email"
-                placeholder="Email"
+                placeholder={t("Email")}
                 textContentType="emailAddress"
                 onChangeText={handleChange("email")}
                 onBlur={() => setFieldTouched("email")}
@@ -61,12 +64,12 @@ function ForgetPassword(props) {
               />
               <AppText style={{ color: "red" }}>{errors.email}</AppText>
               <Text style={styles.text}>
-                Vous recevrez peut-etre des notifications de notre part sur
-                votre boite mail et par texto à des fins de sécurité et de
-                connexion
+                {t(
+                  "Vous recevrez peut-etre des notifications de notre part sur votre boite mail et par texto à des fins de sécurité et de connexion"
+                )}
               </Text>
               <AppButton
-                title="Continuer"
+                title={t("Continuer")}
                 marginTop="30"
                 color="beige"
                 onPress={handleSubmit}
@@ -88,17 +91,22 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   Entete: {
     fontSize: 30,
     fontStyle: "italic",
     color: colors.caramel,
-    marginStart: 15,
+    marginStart: 30,
+    marginTop:30,
   },
   text: {
     fontSize: 20,
     color: colors.grisCalire,
-    marginTop: 15,
+    marginTop: 30,
+    marginend:50,
+
   },
 });
 

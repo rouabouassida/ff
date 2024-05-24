@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet,ImageBackground } from "react-native";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 function PresentielEmployees() {
+  const { t } = useTranslation();
   const [presentEmployees, setPresentEmployees] = useState([]);
   const [error, setError] = useState(null);
 
@@ -18,7 +20,7 @@ function PresentielEmployees() {
           setPresentEmployees([]);
         }
       } catch (error) {
-        console.error("Erreur lors de la récupération des employés :", error);
+        console.error("Error fetching employees:", error);
         setError(error.message);
       }
     };
@@ -28,21 +30,21 @@ function PresentielEmployees() {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Une erreur s'est produite :</Text>
+        <Text style={styles.errorText}>Error occurred:</Text>
         <Text style={styles.errorText}>{error}</Text>
       </View>
     );
   }
 
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}>
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Liste des employés travaillant en présentiel aujourd'hui :
-      </Text>
+      <Text style={styles.title}>{t("presentEmployeesListTitle")}</Text>
       {presentEmployees.length === 0 ? (
-        <Text style={styles.noEmployeeText}>
-          Aucun employé présent aujourd'hui.
-        </Text>
+        <Text style={styles.noEmployeeText}>{t("noEmployeePresent")}</Text>
       ) : (
         presentEmployees.map((employee, index) => (
           <View style={styles.employeeItem} key={index}>
@@ -51,6 +53,8 @@ function PresentielEmployees() {
         ))
       )}
     </View>
+    </ImageBackground>
+
   );
 }
 
@@ -58,11 +62,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop:15
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   employeeItem: {
     padding: 10,

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Alert, ImageBackground ,TouchableOpacity} from "react-native";
+import { StyleSheet, Alert, ImageBackground } from "react-native";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
-import AppFormField from "../components/forms/AppFormField";
 import SubmitButton from "../components/forms/SubmitButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import AppPass from "../components/AppPass";
-import AppButton from "../components/AppButton";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import AppPass from "../components/AppPass";
+import AppText from "../components/AppText";
+import { Formik } from "formik";
+import AppFormField from "../components/forms/AppFormField";
 
 const validationSchema = Yup.object().shape({
   currentPassword: Yup.string().required().label("Mot de passe actuel"),
@@ -21,23 +23,25 @@ const validationSchema = Yup.object().shape({
     )
     .label("Confirmation du nouveau mot de passe"),
 });
+
 function EditPasswordRh() {
-  const [rhId, setRhId] = useState("");
+  const [rhId, setUserId] = useState("");
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const fetchRhId = async () => {
+    const fetchUserId = async () => {
       try {
-        const storedRhId = await AsyncStorage.getItem("rhId");
-        if (storedRhId) {
-          setRhId(storedRhId);
+        const storedUserId = await AsyncStorage.getItem("rhId");
+        if (storedUserId) {
+          setUserId(storedUserId);
         }
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchRhId();
+    fetchUserId();
   }, []);
 
   const handlePasswordChange = async (values) => {
@@ -50,7 +54,7 @@ function EditPasswordRh() {
 
     try {
       const response = await axios.put(
-        "http://192.168.1.15:3000/rh/edit-password",
+        "http://192.168.1.15:3000/rh/edit-Password",
         {
           rhId,
           currentPassword,
@@ -72,12 +76,12 @@ function EditPasswordRh() {
 
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <Screen style={styles.container}>
-        <AppForm
+        <Formik
           initialValues={{
             currentPassword: "",
             newPassword: "",
@@ -86,29 +90,43 @@ function EditPasswordRh() {
           onSubmit={handlePasswordChange}
           validationSchema={validationSchema}
         >
-          <AppPass
-            autoCorrect={false}
-            icon="lock"
-            name="currentPassword"
-            placeholder="Mot de passe actuel"
-            style={{ flex: 1 }}
-          />
-          <AppPass
-            autoCorrect={false}
-            icon="lock"
-            name="newPassword"
-            placeholder="Nouveau mot de passe"
-            style={{ flex: 1 }}
-          />
-          <AppPass
-            autoCorrect={false}
-            icon="lock"
-            name="confirmPassword"
-            placeholder="Confirmer le nouveau mot de passe"
-            style={{ flex: 1 }}
-          />
-          <AppButton title="Enregistrer" onPress={handlePasswordChange} />
-        </AppForm>
+          {({ handleChange, handleSubmit, errors }) => (
+            <>
+              <AppPass
+                autoCorrect={false}
+                icon="lock"
+                name="currentPassword"
+                placeholder={t("currentPassword")}
+                style={{ flex: 1 }}
+              />
+              <AppText style={{ color: "red" }}>
+                {errors.currentPassword}
+              </AppText>
+
+              <AppPass
+                autoCorrect={false}
+                icon="lock"
+                name="newPassword"
+                placeholder={t("newPassword")}
+                style={{ flex: 1 }}
+              />
+              <AppText style={{ color: "red" }}>{errors.newPassword}</AppText>
+
+              <AppPass
+                autoCorrect={false}
+                icon="lock"
+                name="confirmPassword"
+                placeholder={t("confirmPassword")}
+                style={{ flex: 1 }}
+              />
+              <AppText style={{ color: "red" }}>
+                {errors.confirmPassword}
+              </AppText>
+
+              <SubmitButton title={t("save")} />
+            </>
+          )}
+        </Formik>
       </Screen>
     </ImageBackground>
   );
@@ -118,6 +136,8 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   container: {
     padding: 10,

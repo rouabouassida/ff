@@ -5,28 +5,32 @@ import colors from "../config/colors";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
 import AppText from "../components/AppText";
-import AppTextInput from "../components/AppTextInput";
+import AppFormField from "../components/forms/AppFormField";
 import { Formik } from "formik";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next"; // Import the useTranslation hook
 
 function ModifierCongé(props) {
   const navigation = useNavigation();
+  const { t } = useTranslation(); // Utilize the translation function
 
   const validationSchema = Yup.object().shape({
-    nomPrenom: Yup.string().required().label("nomPrenom"),
-    email: Yup.string().required().email().label("email"),
-    NVdateDébut: Yup.string().required().label("nouvelledatedebut"),
-    NVdateFin: Yup.string().required().label("nouvelledatefin"),
+    nomPrenom: Yup.string().required().label("Nom et prénom"),
+    email: Yup.string().required().email().label("Email"),
+    NVdateDébut: Yup.string().required().label("Nouvelle date de début"),
+    NVdateFin: Yup.string().required().label("Nouvelle date de fin"),
   });
+
   const handleEnvoyer = (values) => {
     console.log(values);
-    navigation.navigate("Congé Modifié");
+    navigation.goBack();
   };
+
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <Screen style={styles.container}>
         <Formik
@@ -41,50 +45,58 @@ function ModifierCongé(props) {
         >
           {({ handleChange, handleSubmit, errors, touched }) => (
             <>
-              <Text style={styles.title}>DModifier Congé !</Text>
+              <Text style={styles.title}>{t("Modify Leave")}!</Text>
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Nom et Prénom"
-                onChangeText={handleChange("nomPrenom")}
+                placeholder={t("Name and Surname")}
+                name="nomPrenom"
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
+              {touched.nomPrenom && errors.nomPrenom && (
+                <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
+              )}
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Email"
+                placeholder={t("Email")}
                 keyboardType="email-address"
-                onChangeText={handleChange("email")}
+                name="email"
                 icon="email"
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              {touched.email && errors.email && (
+                <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              )}
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Donner la nouvelle date de début"
-                onChangeText={handleChange("nouvelledateDébut")}
+                placeholder={t("Enter new start date")}
+                name="NVdateDébut"
                 icon="calendar"
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.NVdateDébut}</AppText>
+              {touched.NVdateDébut && errors.NVdateDébut && (
+                <AppText style={{ color: "red" }}>{errors.NVdateDébut}</AppText>
+              )}
 
-              <AppTextInput
+              <AppFormField
                 autoCorrect={false}
-                placeholder="Donner la nouvelle date de fin de congé"
+                placeholder={t("Enter new end date of leave")}
+                name="NVdateFin"
                 icon="calendar"
-                onChangeText={handleChange("NOUVELLEdateFin")}
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.NVdateFin}</AppText>
+              {touched.NVdateFin && errors.NVdateFin && (
+                <AppText style={{ color: "red" }}>{errors.NVdateFin}</AppText>
+              )}
 
               <AppButton
                 style={styles.Button}
-                title="modifier Congé"
+                title={t("Modify Leave")}
                 onPress={handleSubmit}
               />
             </>
@@ -94,22 +106,25 @@ function ModifierCongé(props) {
     </ImageBackground>
   );
 }
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    padding: 20,
+    alignItems: "stretch",
   },
   container: {
     padding: 10,
   },
   title: {
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: 30,
     fontWeight: "bold",
     color: colors.marron,
     fontStyle: "italic",
-    marginTop: 50,
+    marginTop: 260,
+    textAlign: "center",
+
   },
   input: {
     borderColor: "#ddd",

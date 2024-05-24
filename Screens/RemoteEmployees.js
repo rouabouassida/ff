@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet,ImageBackground } from "react-native";
 import axios from "axios";
+import { useTranslation } from 'react-i18next';
 
 function RemoteEmployees() {
+  const { t } = useTranslation();
   const [remoteEmployees, setRemoteEmployees] = useState([]);
   const [error, setError] = useState(null);
 
@@ -35,13 +37,17 @@ function RemoteEmployees() {
   }
 
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}>
     <View style={styles.container}>
       <Text style={styles.title}>
-        Liste des employés travaillant en remote aujourd'hui :
+        {t("remoteEmployeesListTitle")}
       </Text>
       {remoteEmployees.length === 0 ? (
         <Text style={styles.noEmployeeText}>
-          Aucun employé travail à distance aujourd'hui.
+          {t("noRemoteEmployee")}
         </Text>
       ) : (
         remoteEmployees.map((employee, index) => (
@@ -52,6 +58,8 @@ function RemoteEmployees() {
         ))
       )}
     </View>
+    </ImageBackground>
+
   );
 }
 
@@ -59,11 +67,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop:15
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   employeeItem: {
     padding: 10,
@@ -71,8 +86,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   fullname: {
-    fontSize: 18,
-    fontStyle: "normal",
+    fontSize: 20,
+    fontStyle: "italic",
   },
   errorText: {
     fontSize: 16,

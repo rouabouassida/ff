@@ -22,8 +22,7 @@ const PointerUser = () => {
   const handlePress3 = () => {
     navigation.navigate("AccountScreen");
   };
-  const handlePress = () => {
-    navigation.navigate("AccountScreen");
+  const handlePress = () => {    navigation.navigate("AccountScreen");
   };
 
   return (
@@ -83,8 +82,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flexGrow: 1,
   },
-  container: {
-    flex: 1,
+  container: {    flex: 1,
     marginTop: 10,
     justifyContent: "center",
     alignItems: "center",

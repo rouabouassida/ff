@@ -7,7 +7,7 @@ function BonTravail(props) {
     <ImageBackground
       blurRadius={50}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <View style={styles.logoContainer}>
         <Image
@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignContent:"stretch"
   },
   logo: {
     width: 200,

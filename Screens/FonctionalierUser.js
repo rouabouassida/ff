@@ -10,8 +10,11 @@ import {
 } from "react-native";
 import colors from "../config/colors";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next"; // Importer la fonction useTranslation pour utiliser la traduction
 
 function FonctionaliterUser(props) {
+  const { t } = useTranslation(); // Initialiser la fonction de traduction
+
   const navigation = useNavigation();
 
   const handlePointagePress = () => {
@@ -32,9 +35,9 @@ function FonctionaliterUser(props) {
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <ImageBackground
-        blurRadius={50}
+
         style={styles.background}
-        source={require("../assets/welcomebackground.jpg")}
+        source={require("../assets/a3.png")}
       >
         <View style={styles.container}>
           <TouchableOpacity
@@ -47,7 +50,7 @@ function FonctionaliterUser(props) {
                 style={styles.image}
               />
             </View>
-            <Text style={styles.text}>pointager</Text>
+            <Text style={styles.text}>{t("pointage")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.circleContainer}
@@ -59,7 +62,7 @@ function FonctionaliterUser(props) {
                 style={styles.image}
               />
             </View>
-            <Text style={styles.text}>Gérer le congé</Text>
+            <Text style={styles.text}>{t("gererConge")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.circleContainer}
@@ -71,7 +74,7 @@ function FonctionaliterUser(props) {
                 style={styles.image}
               />
             </View>
-            <Text style={styles.text}>Demande de travail en ligne</Text>
+            <Text style={styles.text}>{t("demandeTravailEnLigne")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.circleContainer}
@@ -83,19 +86,19 @@ function FonctionaliterUser(props) {
                 style={styles.image}
               />
             </View>
-            <Text style={styles.text}>Consulter disposition</Text>
+            <Text style={styles.text}>{t("consulterDisposition")}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.circleContainer}
             onPress={handleSettings}
           >
-            <View style={styles.circle4}>
+            <View style={styles.circle5}>
               <Image
                 source={require("../assets/seetings.jpg")}
                 style={styles.image}
               />
             </View>
-            <Text style={styles.text}>Gérer compte</Text>
+            <Text style={styles.text}>{t("gererCompte")}</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -109,11 +112,13 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: "center",
+    alignContent:"stretch"
+
   },
   container: {
     flex: 1,
+    padding:30,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -122,40 +127,50 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   circle1: {
-    width: 100,
+    width: 120,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.marron,
+    backgroundColor: "#D8BF9F",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     zIndex: 3,
   },
   circle2: {
-    width: 100,
+    width: 120,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.marron,
+    backgroundColor: "#BEC6C3",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     zIndex: 3,
   },
   circle3: {
-    width: 100,
+    width: 120,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.marron,
+    backgroundColor: "#E9BC8B",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     zIndex: 3,
   },
   circle4: {
-    width: 100,
+    width: 120,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.marron,
+    backgroundColor: "#3D4A55",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+    zIndex: 3,
+  },
+  circle5: {
+    width: 120,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#AAA245",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",

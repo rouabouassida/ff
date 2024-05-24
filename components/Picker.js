@@ -14,6 +14,7 @@ import defaultStyles from "../config/styles";
 import PickerItem from "./PickerItem";
 import Screen from "./Screen";
 import colors from "../config/colors";
+import { useTranslation } from 'react-i18next'; // Importez la fonction useTranslation
 
 function AppPicker({
   icon,
@@ -26,6 +27,7 @@ function AppPicker({
   width = "100%",
 }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const { t } = useTranslation(); // Obtenez la fonction de traduction t()
 
   return (
     <>
@@ -70,7 +72,7 @@ function AppPicker({
             )}
           />
           <Button
-            title="Close"
+            title={t("Close")}
             color={colors.beige}
             onPress={() => setModalVisible(false)}
           />

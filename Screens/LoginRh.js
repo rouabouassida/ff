@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text,TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View,ImageBackground } from "react-native";
 import Screen from "../components/Screen";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
@@ -9,7 +9,8 @@ import * as Yup from "yup";
 import colors from "../config/colors";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
-import AppPass from "../components/AppPass"
+import AppPass from "../components/AppPass";
+import { useTranslation } from "react-i18next"; // Import the useTranslation hook
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,10 +20,9 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginRh(props) {
-  // Added state hooks for email and password
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { t } = useTranslation();
   const navigation = useNavigation();
 
   const handleLogin = async (values) => {
@@ -50,11 +50,15 @@ function LoginRh(props) {
   };
 
   return (
+    <ImageBackground
+    style={styles.background}
+    source={require("../assets/a2.png")}
+  >
     <Screen style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/s.png")} />
+      <Image style={styles.logo} source={require("../assets/logoF.png")} />
       <Formik
         initialValues={{ email: "", password: "" }}
-        onSubmit={handleLogin} // Changed to handleLogin
+        onSubmit={handleLogin}
         validationSchema={validationSchema}
       >
         {({ handleChange, handleSubmit, errors }) => (
@@ -65,47 +69,59 @@ function LoginRh(props) {
               keyboardType="email-address"
               onChangeText={handleChange("email")}
               icon="email"
-              placeholder="Email"
+              placeholder={t("Email")}
             />
             <AppText style={{ color: "red" }}>{errors.email}</AppText>
             <AppPass
-             autoCapitalize="none"
-             autoCorrect={false}
-             icon="lock"
-             onChangeText={handleChange("password")}
-             placeholder="mot de passe"
-             style={{ flex: 1 }}
+              autoCapitalize="none"
+              autoCorrect={false}
+              icon="lock"
+              onChangeText={handleChange("password")}
+              placeholder={t("Password")}
+              style={{ flex: 1 }}
             />
             <AppText style={{ color: "red" }}>{errors.password}</AppText>
-            <AppButton title="Login" onPress={handleSubmit} />
+            <AppButton title={t("Login")} onPress={handleSubmit} />
           </>
         )}
       </Formik>
       <TouchableOpacity onPress={handleForgetPassword}>
-        <Text style={styles.forget}>Mot de passe oublié ?</Text>
+        <Text style={styles.forget}>{t("Forgot Password?")}</Text>
       </TouchableOpacity>
-    </Screen>
+    </Screen></ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
+    justifyContent: "center",
+    
+
+  },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent:"center",
+    alignContent:"stretch"
+
   },
   logo: {
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     alignSelf: "center",
     marginBottom: 20,
     marginTop: 80,
   },
   forget: {
-    color: colors.marron, // Ensure this color is defined in your colors config
+    color: "#20847d",
     fontSize: 15,
     fontStyle: "italic",
     marginTop: 50,
     alignSelf: "center",
+    textDecorationLine: "underline", 
+
   },
 });
 
-export default LoginRh  ;
+export default LoginRh;

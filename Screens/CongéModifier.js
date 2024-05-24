@@ -3,30 +3,40 @@ import { StyleSheet, View, Text, Image, ImageBackground } from "react-native";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
 
+// Importez le hook useTranslation pour accéder aux traductions
+import { useTranslation } from 'react-i18next';
+
 function CongéEnvoyer(props) {
+  // Utilisez le hook useTranslation pour obtenir les fonctions de traduction
+  const { t } = useTranslation();
+
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <View style={styles.logoContainer}>
         <Image
           style={styles.logo}
           source={require("../assets/bonTravail1.png")}
         ></Image>
-        <Text style={styles.tagtitle}> Congé Modifier avec succes... </Text>
-        <AppButton style={styles.btn}>OKEY</AppButton>
+        {/* Utilisez t() pour traduire le texte */}
+        <Text style={styles.tagtitle}>{t('Request_Sent')}</Text>
+        <AppButton style={styles.btn}>{t('OK')}</AppButton>
       </View>
     </ImageBackground>
   );
 }
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
+    alignContent:"stretch"
+
   },
   logo: {
     width: 200,

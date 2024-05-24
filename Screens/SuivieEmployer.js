@@ -6,11 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  ImageBackground,
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios"; // Importation de Axios
+import { useTranslation } from 'react-i18next'; // Importation de useTranslation pour la traduction
 import SubmitButton from "../components/forms/SubmitButton";
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
@@ -19,6 +21,7 @@ import colors from "../config/colors";
 
 function SuivieEmployer() {
   const navigation = useNavigation();
+  const { t } = useTranslation(); // Utilisation de useTranslation pour la traduction
   const [name, setName] = useState("");
   const [employeeInfo, setEmployeeInfo] = useState(null);
   const [todayDate, setTodayDate] = useState(
@@ -34,53 +37,60 @@ function SuivieEmployer() {
     } catch (error) {
       console.error("Error fetching employee info: ", error);
       Alert.alert(
-        "Erreur",
-        "Une erreur s'est produite lors de la récupération des informations de l'employé."
+        t("errorTitle"),
+        t("errorMessage")
       );
     }
   };
 
   return (
+  
     <ScrollView contentContainerStyle={styles.scrollView}>
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}
+  >
       <Screen style={styles.container}>
         <View style={styles.dateContainer}>
-          <Text style={styles.dateText}>Date d'aujourd'hui : {todayDate}</Text>
+          <Text style={styles.dateText}>{t("todayDateLabel")}: {todayDate}</Text>
         </View>
         <AppForm initialValues={{ fullname: "" }} onSubmit={handleFollow}>
           <AppFormField
             autoCorrect={false}
             name="fullname"
-            placeholder="Nom de l'employé"
+            placeholder={t("employeeNamePlaceholder")}
             onChangeText={(text) => setName(text)}
             value={name}
           />
-          <SubmitButton title="Suivre Employé" />
+          <SubmitButton title={t("followEmployeeButton")} />
         </AppForm>
         <View style={styles.container}>
-  {employeeInfo && (
-    <View style={styles.employeeInfoContainer}>
-      <Text style={styles.employeeInfoTitle}>Informations de l'employé</Text>
-      {employeeInfo.map((employee, index) => (
-        <View key={index} style={styles.employeeEntryContainer}>
-          <View style={styles.entriesContainer}>
-            {employee.entries.map((entry, entryIndex) => (
-              <View key={entryIndex} style={styles.entryContainer}>
-                <Text>Nom: {entry.fullname}</Text>
-                <Text>Heure d'entrée: {entry.entryTime}</Text>
-                <Text>Heure de sortie: {entry.exitTime}</Text>
-                <Text>Heures travaillées: {entry.hoursWorked}</Text>
-                <Text>Mode de travail: {entry.workMode}</Text>
-              </View>
-            ))}
-          </View>
+          {employeeInfo && (
+            <View style={styles.employeeInfoContainer}>
+              <Text style={styles.employeeInfoTitle}>{t("employeeInfoTitle")}</Text>
+              {employeeInfo.map((employee, index) => (
+                <View key={index} style={styles.employeeEntryContainer}>
+                  <View style={styles.entriesContainer}>
+                    {employee.entries.map((entry, entryIndex) => (
+                      <View key={entryIndex} style={styles.entryContainer}>
+                        <Text>{t("employeeNameLabel")}: {entry.fullname}</Text>
+                        <Text>{t("entryTimeLabel")}: {entry.entryTime}</Text>
+                        <Text>{t("exitTimeLabel")}: {entry.exitTime}</Text>
+                        <Text>{t("hoursWorkedLabel")}: {entry.hoursWorked}</Text>
+                        <Text>{t("workModeLabel")}: {entry.workMode}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
-      ))}
-    </View>
-  )}
-</View>
-
       </Screen>
+      </ImageBackground>
     </ScrollView>
+    
   );
 }
 
@@ -89,6 +99,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginTop: 120,
+    
+  },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "stretch",
   },
   dateContainer: {
     marginBottom: 20,
@@ -103,7 +119,6 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 10,
     borderRadius: 15,
-    
   },
   employeeInfoTitle: {
     fontWeight: "bold",
@@ -111,6 +126,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: colors.beige,
   },
+  employeeInfoContainer:{
+    marginTop: 10,
+    padding: 10,
+  }
+  
 });
 
 export default SuivieEmployer;

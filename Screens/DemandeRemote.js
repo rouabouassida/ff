@@ -1,23 +1,26 @@
-import AppText from "../components/AppText";
 import React from "react";
-import { Text, StyleSheet, ImageBackground, TextInput } from "react-native";
+import { Text, StyleSheet, ImageBackground ,ScrollView} from "react-native";
 import AppButton from "../components/AppButton";
 import colors from "../config/colors";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
-import AppTextInput from "../components/AppTextInput";
+import AppText from "../components/AppText";
 import { Formik } from "formik";
-import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next"; // Importer le hook de traduction
 import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
+import AppFormField from "../components/forms/AppFormField";
 
 function DemandeRemote(props) {
+  const { t } = useTranslation(); // Utiliser le hook de traduction
   const navigation = useNavigation();
-
   const validationSchema = Yup.object().shape({
-    nomPrenom: Yup.string().required().label("nomPrenom"),
-    email: Yup.string().required().email().label("email"),
-    date: Yup.string().required().label("date"),
+    nomPrenom: Yup.string().required().label(t("Name and Surname")),
+    email: Yup.string().required().email().label(t("Email")),
+    dateDebut: Yup.string().required().label(t("DateDebut")),
+    dateFin: Yup.string().required().label(t("DateFin")),
   });
+  
 
   const handleEnvoyer = async (values) => {
     try {
@@ -37,63 +40,89 @@ function DemandeRemote(props) {
 
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
+            <ScrollView  vertical={true}>
+
       <Screen style={styles.container}>
         <Formik
-          initialValues={{ nomPrenom: "", email: "", date: "" }}
+          initialValues={{ nomPrenom: "", email: "", dateDebut: "" ,dateFin: ""}}
           onSubmit={handleEnvoyer}
           validationSchema={validationSchema}
         >
           {({ handleChange, handleSubmit, errors, touched }) => (
             <>
-              <Text style={styles.title}>Demande de travail en remote</Text>
+              <Text style={styles.title}>{t("remoteWorkRequest")}</Text>
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Nom et Prénom"
-                onChangeText={handleChange("nomPrenom")}
+                placeholder={t("Name and Surname")}
+                name="nomPrenom"
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
+              {touched.nomPrenom && errors.nomPrenom && (
+                <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
+              )}
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Email"
+                placeholder={t("Email")}
                 keyboardType="email-address"
-                onChangeText={handleChange("email")}
+                name="email"
+                icon="email"
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              {touched.email && errors.email && (
+                <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              )}
 
-              <AppTextInput
+              <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
-                placeholder="Date"
-                keyboardType="numeric"
+                placeholder={t("Date")}
+                name="dateDebut"
                 onChangeText={(text) => {
                   if (text.length === 2 || text.length === 5) {
                     text += "-";
                   }
-                  handleChange("date")(text);
+                  handleChange("dateDebut")(text);
                 }}
                 style={styles.input}
               />
-              <AppText style={{ color: "red" }}>{errors.date}</AppText>
+              {touched.dateDebut && errors.dateDebut && (
+                <AppText style={{ color: "red" }}>{errors.dateDebut}</AppText>
+              )}
+              <AppFormField
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder={t("Date")}
+                name="dateFin"
+                onChangeText={(text) => {
+                  if (text.length === 2 || text.length === 5) {
+                    text += "-";
+                  }
+                  handleChange("dateFin")(text);
+                }}
+                style={styles.input}
+              />
+              {touched.dateFin && errors.dateFin && (
+                <AppText style={{ color: "red" }}>{errors.dateFin}</AppText>
+              )}
 
               <AppButton
                 style={styles.Button}
-                title="Envoyer"
+                title={t("send")}
                 onPress={handleSubmit}
               />
             </>
           )}
         </Formik>
       </Screen>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -102,18 +131,21 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    padding: 20,
+    alignContent:"stretch"
+
   },
   container: {
     padding: 10,
   },
   title: {
     fontSize: 20,
-    marginBottom: 10,
+    marginBottom: 30,
     fontWeight: "bold",
     color: colors.marron,
     fontStyle: "italic",
-    marginTop: 50,
+    marginTop: 300,
+    textAlign: "center",
+
   },
   input: {
     borderColor: "#ddd",

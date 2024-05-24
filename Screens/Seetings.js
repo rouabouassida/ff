@@ -1,10 +1,9 @@
-import React from "react";
-import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert ,ImageBackground} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { Alert } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import ListItem from "../components/lists/ListItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
@@ -30,7 +29,7 @@ const menuItems = [
     screen: "EditPasswordRH",
   },
   {
-    title: "Supprimer un RH",
+    title: "Delete RH",
     icon: {
       name: "account-remove",
       backgroundColor: colors.medium,
@@ -38,20 +37,20 @@ const menuItems = [
     screen: "SupprimerRH",
   },
   {
-    title: "Change profile photo",
+    title: "Change Language",
     icon: {
       name: "account-tie-outline",
       backgroundColor: colors.caramel,
     },
-    screen: "",
+    screen: "ModifierLanguage",
   },
- 
 ];
 
 function Seetings(props) {
+  const { t } = useTranslation();
   const [fullname, setFullname] = useState("");
-
   const [email, setEmail] = useState("");
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchFullname = async () => {
@@ -80,7 +79,6 @@ function Seetings(props) {
 
     fetchEmail();
   }, []);
-  const navigation = useNavigation();
 
   const handleMenuItemPress = (screen) => {
     if (screen) {
@@ -91,16 +89,16 @@ function Seetings(props) {
   const handleLogout = async () => {
     // Afficher une alerte de confirmation
     Alert.alert(
-      "Êtes-vous sûr de vouloir vous déconnecter ?",
-      "Cette action entraînera la perte de l'accès à votre compte.",
+      t("logoutConfirmationTitle"),
+      t("logoutConfirmationMessage"),
       [
         {
-          text: "Non",
+          text: t("logoutConfirmationCancel"),
           onPress: () => console.log("Déconnexion annulée"),
           style: "cancel"
         },
         {
-          text: "Oui",
+          text: t("logoutConfirmationConfirm"),
           onPress: async () => {
             try {
               const res = await axios.post("http://192.168.1.15:3000/user/logout");
@@ -119,7 +117,7 @@ function Seetings(props) {
             } catch (error) {
               console.error("Erreur lors de la déconnexion", error);
               // Affichez un message d'erreur si la déconnexion échoue
-              alert("La déconnexion a échoué, veuillez réessayer.");
+              alert(t("logoutFailedMessage"));
             }
           }
         }
@@ -128,13 +126,16 @@ function Seetings(props) {
     );
   };
 
-
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}>
     <Screen style={styles.screen}>
       <View style={styles.container}>
         <ListItem
-          title="Roua Bouassida"
-          subTitle="rouabouassida7@gmail.com"
+          title={fullname}
+          subTitle={email}
           image={require("../assets/utilisateur.png")}
         />
       </View>
@@ -144,10 +145,10 @@ function Seetings(props) {
           keyExtractor={(menuItem) => menuItem.title}
           ItemSeparatorComponent={ListItemSeparator}
           renderItem={({ item }) => (
-            <TouchableOpacity>
+            <TouchableOpacity >
               <ListItem
               onPress={() => handleMenuItemPress(item.screen)}
-                title={item.title}
+              title={t(item.title)}
                 IconComponent={
                   <Icon
                     name={item.icon.name}
@@ -160,20 +161,26 @@ function Seetings(props) {
         />
       </View>
       <ListItem
-        title="Déconnexion"
+        title={t("logoutTitle")}
         IconComponent={<Icon name="logout" backgroundColor="#ffe66d" />}
         onPress={handleLogout}
       />
     </Screen>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: colors.claire,
   },
   container: {
     marginVertical: 20,
+    
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
   },
 });
 

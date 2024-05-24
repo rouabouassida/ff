@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
+import { StyleSheet, View, FlatList, TouchableOpacity, ImageBackground } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 import ListItem from "../components/lists/ListItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
@@ -9,6 +10,7 @@ import Icon from "../components/Icon";
 import Screen from "../components/Screen";
 
 function GererEmployer() {
+  const { t } = useTranslation(); // Utiliser la fonction de traduction
   const navigation = useNavigation();
 
   const handleMenuItemPress = (screen) => {
@@ -17,7 +19,7 @@ function GererEmployer() {
 
   const menuItems = [
     {
-      title: "Suivie Employé",
+      title: t("Suivie Employé"),
       icon: {
         name: "account-eye",
         backgroundColor: colors.medium,
@@ -25,7 +27,7 @@ function GererEmployer() {
       screen: "SuivieEmployer",
     },
     {
-      title: "Ajouter Employé",
+      title: t("Ajouter Employé"),
       icon: {
         name: "account-plus",
         backgroundColor: colors.medium,
@@ -33,7 +35,7 @@ function GererEmployer() {
       screen: "AjouterEmployer",
     },
     {
-      title: "Modifier Employé",
+      title: t("Modifier Employé"),
       icon: {
         name: "account-edit",
         backgroundColor: colors.medium,
@@ -41,7 +43,7 @@ function GererEmployer() {
       screen: "ModifierEmployer",
     },
     {
-      title: "Supprimer Employé",
+      title: t("Supprimer Employé"),
       icon: {
         name: "account-remove",
         backgroundColor: colors.danger,
@@ -51,6 +53,11 @@ function GererEmployer() {
   ];
 
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a3.png")}
+  >
     <Screen style={styles.screen}>
       <FlatList
         data={menuItems}
@@ -73,16 +80,23 @@ function GererEmployer() {
         contentContainerStyle={styles.container}
       />
     </Screen>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: colors.light,
+   
     flex: 1,
   },
   container: {
     paddingVertical: 30,
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
 });
 

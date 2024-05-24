@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, Alert } from "react-native";
+import { StyleSheet, Alert ,ImageBackground} from "react-native";
 import * as Yup from "yup";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
@@ -13,11 +14,13 @@ const validationSchema = Yup.object().shape({
 });
 
 function Supprimer() {
+  const { t } = useTranslation();
+
   const handleDelete = async (values) => {
     const { email } = values;
     Alert.alert(
-      "Confirmation",
-      `Êtes-vous sûr de vouloir supprimer l'employé avec l'email : ${email} ?`,
+      t("confirmation"),
+      t("confirmDeleteMessage", { email }),
       [
         {
           text: "Non",
@@ -47,6 +50,11 @@ function Supprimer() {
   };
 
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}
+  >
     <Screen style={styles.container}>
       <AppForm
         initialValues={{ email: "" }}
@@ -57,13 +65,13 @@ function Supprimer() {
           autoCorrect={false}
           icon="email"
           name="email"
-          placeholder="Email"
+          placeholder={t("emailPlaceholder")}
           keyboardType="email-address"
         />
 
-        <SubmitButton title="Delete Employee" />
+        <SubmitButton title={t("deleteEmployeeButton")} />
       </AppForm>
-    </Screen>
+    </Screen></ImageBackground>
   );
 }
 
@@ -71,6 +79,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginTop: "auto",
+  },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "stretch",
   },
 });
 

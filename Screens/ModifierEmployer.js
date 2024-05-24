@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert ,ImageBackground} from "react-native";
+import { useTranslation } from "react-i18next"; // Importer la fonction de traduction
 import * as Yup from "yup";
 import axios from "axios";
 
@@ -18,6 +19,8 @@ const validationSchema = Yup.object().shape({
 });
 
 function ModifierEmploye() {
+  const { t } = useTranslation(); // Utiliser la fonction de traduction
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -40,15 +43,15 @@ function ModifierEmploye() {
 
         // Afficher une alerte pour confirmer la modification
         Alert.alert(
-          "Modification réussie",
-          "Les informations de l'employé ont été modifiées avec succès."
+          t("Success"),
+          t("Employee successfully modified!")
         );
       }
     } catch (error) {
       console.error("Erreur lors de la modification de l'employé :", error);
       Alert.alert(
-        "Erreur",
-        "Une erreur est survenue lors de la modification de l'employé."
+        t("Error"),
+        t("An error occurred while modifying the employee.")
       );
     }
   };
@@ -58,6 +61,11 @@ function ModifierEmploye() {
   };
 
   return (
+    <ImageBackground
+    blurRadius={10}
+    style={styles.background}
+    source={require("../assets/a2.png")}
+  >
     <Screen style={styles.container}>
       <AppForm
         initialValues={formData}
@@ -68,7 +76,7 @@ function ModifierEmploye() {
           autoCorrect={false}
           icon="account"
           name="name"
-          placeholder="Name"
+          placeholder={t("Name")}
           onChangeText={(value) => handleChange("name", value)}
         />
         <AppFormField
@@ -77,7 +85,7 @@ function ModifierEmploye() {
           icon="email"
           keyboardType="email-address"
           name="email"
-          placeholder="Email"
+          placeholder={t("Email")}
           textContentType="emailAddress"
           onChangeText={(value) => handleChange("email", value)}
         />
@@ -86,7 +94,7 @@ function ModifierEmploye() {
           autoCorrect={false}
           icon="lock"
           name="password"
-          placeholder="Password"
+          placeholder={t("Password")}
           secureTextEntry
           textContentType="password"
           onChangeText={(value) => handleChange("password", value)}
@@ -96,14 +104,15 @@ function ModifierEmploye() {
           autoCorrect={false}
           icon="lock"
           name="confirmPassword"
-          placeholder="Confirm Password"
+          placeholder={t("Confirm Password")}
           secureTextEntry
           textContentType="password"
           onChangeText={(value) => handleChange("confirmPassword", value)}
         />
-        <SubmitButton title="Modify Employee" />
+        <SubmitButton title={t("Modify Employee")} />
       </AppForm>
     </Screen>
+    </ImageBackground>
   );
 }
 
@@ -111,6 +120,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginTop: "auto",
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "stretch",
+
   },
 });
 

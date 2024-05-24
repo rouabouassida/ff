@@ -3,16 +3,18 @@ import AppPicker from "../components/Picker";
 import Screen from "../components/Screen";
 import { StyleSheet, ImageBackground, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next"; // Importer useTranslation depuis react-i18next
 
-const categories = [
-  { label: "Employés Presentiel", value: 1 },
-  { label: "Travail En Remote", value: 2 },
-  { label: "Employés En Congé", value: 3 },
-];
 
 function Consulterdisposition(props) {
   const navigation = useNavigation();
-
+  const { t } = useTranslation(); // Utiliser useTranslation pour la traduction
+  const categories = [
+    { label: t("Employés Presentiel"), value: 1 },
+    { label: t("Travail En Remote"), value: 2 },
+    { label: t("Employés En Congé"), value: 3 },
+  ];
+  
   const handleSelect = (item) => {
     if (item.value === 3) {
       navigation.navigate("CongeEmployee");
@@ -25,16 +27,15 @@ function Consulterdisposition(props) {
 
   return (
     <ImageBackground
-      blurRadius={50}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a3.png")}
     >
       <Screen>
         <AppPicker
           items={categories}
           icon="apps"
-          placeholder="Le mode de travail"
-          onSelectItem={handleSelect} // Correction : Utilisation de onSelectItem
+          placeholder={t("Work_Mode")} // Utiliser la traduction pour le placeholder
+          onSelectItem={handleSelect}
         />
       </Screen>
       <Image
@@ -49,6 +50,8 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   Image: {
     width: 200,

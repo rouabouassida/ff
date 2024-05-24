@@ -8,12 +8,17 @@ import SubmitButton from "../components/forms/SubmitButton";
 import colors from "../config/colors";
 import axios from "axios";
 import { Alert } from "react-native";
+import { useTranslation } from "react-i18next";
+import { useLanguage } from "../Screens/LanguageContext";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
 });
 
 function Login(props) {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
+
   const handleSubmit = async (values) => {
     try {
       const response = await axios.post(
@@ -24,27 +29,21 @@ function Login(props) {
       );
 
       if (response.data.success) {
-        Alert.alert(
-          "Succès",
-          "Un e-mail contenant votre nouveau mot de passe a été envoyé."
-        );
+        Alert.alert(t("Success"), t("Password_Reset_Email_Sent"));
       } else {
-        Alert.alert(
-          "Erreur",
-          "Une erreur s'est produite lors de l'envoi de l'e-mail."
-        );
+        Alert.alert(t("Error"), t("Email_Sending_Error"));
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Erreur", "Une erreur s'est produite lors de la connexion.");
+      Alert.alert(t("Error"), t("Login_Error"));
     }
   };
   return (
     <Screen style={styles.container}>
       <ImageBackground
-        blurRadius={50}
+        blurRadius={10}
         style={styles.background}
-        source={require("../assets/welcomebackground.jpg")}
+        source={require("../assets/a2.png")}
       >
         <Image style={styles.logo} source={require("../assets/s.png")} />
 
@@ -59,11 +58,11 @@ function Login(props) {
             icon="email"
             keyboardType="email-address"
             name="email"
-            placeholder="Email"
+            placeholder={t("Email")}
             textContentType="emailAddress"
           />
 
-          <SubmitButton title="Envoyer un mot de pass" />
+          <SubmitButton title={t("Send_Password")} />
         </AppForm>
       </ImageBackground>
     </Screen>
@@ -75,7 +74,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 2,
   },
-  background: { flex: 1, justifyContent: "flex-start", alignItems: "center" },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+  },
   logo: {
     width: 180,
     height: 180,

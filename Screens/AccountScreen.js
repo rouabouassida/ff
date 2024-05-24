@@ -1,47 +1,50 @@
 import React from "react";
-import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
+import { StyleSheet, View, FlatList, TouchableOpacity, ImageBackground } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { Alert } from 'react-native';
-
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../Screens/LanguageContext'; 
 import ListItem from "../components/lists/ListItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
 import colors from "../config/colors";
 import Icon from "../components/Icon";
 import Screen from "../components/Screen";
 
-const menuItems = [
-  {
-    title: "Edit Name",
-    icon: {
-      name: "account-edit",
-      backgroundColor: colors.primary,
-    },
-    screen: "EditName",
-  },
-  {
-    title: "Edit Password",
-    icon: {
-      name: "account-key",
-      backgroundColor: colors.secondary,
-    },
-    screen: "EditPassword",
-  },
-  {
-    title: "Change profile photo",
-    icon: {
-      name: "account-tie-outline",
-      backgroundColor: colors.caramel,
-    },
-    screen: "",
-  },
-];
+const AccountScreen = () => {
+  const { t } = useTranslation();
+  const { language } = useLanguage();
 
-function AccountScreen(props) {
+  const menuItems = [
+    {
+      title: t("Edit_Name"),
+      icon: {
+        name: "account-edit",
+        backgroundColor: colors.primary,
+      },
+      screen: "EditName",
+    },
+    {
+      title: t("Edit_Password"),
+      icon: {
+        name: "account-key",
+        backgroundColor: colors.secondary,
+      },
+      screen: "EditPassword",
+    },
+    {
+      title: t("Modifier_Language"),
+      icon: {
+        name: "account-tie-outline",
+        backgroundColor: colors.caramel,
+      },
+      screen: "ModifierLanguage",
+    },
+  ];
+
   const [fullname, setFullname] = useState("");
-
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -71,6 +74,7 @@ function AccountScreen(props) {
 
     fetchEmail();
   }, []);
+
   const navigation = useNavigation();
 
   const handleMenuItemPress = (screen) => {
@@ -82,16 +86,16 @@ function AccountScreen(props) {
   const handleLogout = async () => {
     // Afficher une alerte de confirmation
     Alert.alert(
-      "Êtes-vous sûr de vouloir vous déconnecter ?",
-      "Cette action entraînera la perte de l'accès à votre compte.",
+      t("Confirm_Logout"),
+      t("Logout_Message"),
       [
         {
-          text: "Non",
+          text: t("Cancel"),
           onPress: () => console.log("Déconnexion annulée"),
           style: "cancel"
         },
         {
-          text: "Oui",
+          text: t("Yes"),
           onPress: async () => {
             try {
               const res = await axios.post("http://192.168.1.15:3000/user/logout");
@@ -110,7 +114,7 @@ function AccountScreen(props) {
             } catch (error) {
               console.error("Erreur lors de la déconnexion", error);
               // Affichez un message d'erreur si la déconnexion échoue
-              alert("La déconnexion a échoué, veuillez réessayer.");
+              alert(t("Logout_Failed"));
             }
           }
         }
@@ -119,13 +123,18 @@ function AccountScreen(props) {
     );
   };
 
-
   return (
+    <ImageBackground
+    blurRadius={10}
+
+    style={styles.background}
+    source={require("../assets/a3.png")}
+  >
     <Screen style={styles.screen}>
       <View style={styles.container}>
         <ListItem
-          title="Roua Bouassida"
-          subTitle="rouabouassida7@gmail.com"
+          title={fullname}
+          subTitle={email}
           image={require("../assets/utilisateur.png")}
         />
       </View>
@@ -151,20 +160,25 @@ function AccountScreen(props) {
         />
       </View>
       <ListItem
-        title="Déconnexion"
+        title={t("Logout")}
         IconComponent={<Icon name="logout" backgroundColor="#ffe66d" />}
         onPress={handleLogout}
       />
     </Screen>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
-    backgroundColor: colors.claire,
   },
   container: {
     marginVertical: 20,
+  },
+  background: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent:"stretch"
   },
 });
 

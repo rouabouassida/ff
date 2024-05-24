@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,29 +7,53 @@ import {
   ImageBackground,
   Alert,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import colors from "../config/colors";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+
+const verifyExistingEntry = async (fullname) => {
+  try {
+    const response = await axios.post(
+      "http://192.168.1.15:3000/employees/getActiveEmployee",
+      {
+        fullname,
+      }
+    );
+    if (response.data.message === "Employee exist") {
+      await AsyncStorage.removeItem("workedTime");
+      await AsyncStorage.setItem(
+        "workedTime",
+        response.data.entry[0].hoursWorked
+      );
+      return true;
+    }
+  } catch (error) {
+    console.error("Error verifying existing entry:", error);
+    return false;
+  }
+};
 
 function PointageUser(props) {
-  const navigation = useNavigation();
+  const { t } = useTranslation();
   const [workMode, setWorkMode] = useState("");
+  const navigation = useNavigation();
 
   const handleWorkMode = (mode) => {
     setWorkMode(mode);
     Alert.alert(
-      "Mode de travail sélectionné",
-      `Vous avez choisi de travailler ${
-        mode === "remote" ? "à distance" : "en présentiel"
-      }.`
+      t("Work Mode Selected"),
+      t("You have chosen to work {{mode}}.", {
+        mode: mode === "remote" ? t("remotely") : t("on-site"),
+      })
     );
   };
 
   const handleCommencer = async () => {
     try {
       if (!workMode) {
-        Alert.alert("Sélectionnez un type de travail");
+        Alert.alert(t("Select a work type"));
         return;
       }
 
@@ -41,36 +65,37 @@ function PointageUser(props) {
         workMode: workMode,
         fullname: fullname,
       };
+      if (!(await verifyExistingEntry(fullname))) {
+        const response = await axios.post(
+          "http://192.168.1.15:3000/employees/createEntry",
+          entryData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      const response = await axios.post(
-        "http://192.168.1.15:3000/employees/createEntry",
-        entryData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (response) {
+          const Entry = response.data.data;
+          await AsyncStorage.setItem("entryId", Entry._id);
         }
-      );
-
-      if (response) {
-        const Entry = response.data.data;
-        await AsyncStorage.setItem("entryId", Entry._id);
-        navigation.navigate("Chrono");
       }
+      navigation.navigate("Chrono");
     } catch (error) {
-      console.error("Erreur lors de la sauvegarde des données :", error);
-      Alert.alert("Erreur lors de la sauvegarde des données");
+      console.error(t("Error saving data:"), error);
+      Alert.alert(t("Error"), t("An error occurred while saving data."));
     }
   };
 
   return (
     <ImageBackground
-      blurRadius={50}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <View style={styles.container}>
-        <Text style={styles.text}>Check ton mode de travail :</Text>
+        <Text style={styles.text}>{t("Check your work mode:")}</Text>
+        
         <TouchableOpacity
           style={[
             styles.checkbox,
@@ -78,7 +103,7 @@ function PointageUser(props) {
           ]}
           onPress={() => handleWorkMode("presentiel")}
         >
-          <Text style={styles.checkboxLabel}>Travail en présentiel</Text>
+          <Text style={styles.checkboxLabel}>{t("On-site Work")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -87,11 +112,11 @@ function PointageUser(props) {
           ]}
           onPress={() => handleWorkMode("remote")}
         >
-          <Text style={styles.checkboxLabel}>Travail à distance</Text>
+          <Text style={styles.checkboxLabel}>{t("Remote Work")}</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity style={styles.button} onPress={handleCommencer}>
-        <Text style={styles.buttonText}>J'ai commencé</Text>
+        <Text style={styles.buttonText}>{t("I've started")}</Text>
       </TouchableOpacity>
     </ImageBackground>
   );
@@ -100,15 +125,17 @@ function PointageUser(props) {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
+    justifyContent: "center",
+    alignItems: "stretch",
   },
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "flex-start",
-    marginTop: 40,
+    justifyContent: "center",
+    alignItems: "cernter",
+
     marginLeft: 20,
+    marginTop: "auto",
+    paddingEnd: 20,
   },
   text: {
     fontSize: 20,
@@ -117,37 +144,42 @@ const styles = StyleSheet.create({
     color: colors.marron,
     fontStyle: "italic",
     marginLeft: 20,
+    padding: 10,
   },
   checkbox: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    backgroundColor: colors.caramel,
-    padding: 5,
-    borderRadius: 5,
-    marginBottom: 10,
+    backgroundColor: colors.white,
+    padding: 10,
+    borderRadius: 15,
+    marginBottom: 15,
+    width: 350,
   },
   selectedCheckbox: {
-    backgroundColor: colors.beige,
+    backgroundColor: "#9AD0D3",
   },
   checkboxLabel: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    marginLeft: 10,
-    color: colors.white,
+    marginLeft: 20,
+    color: colors.dark,
+    justifyContent: "center",
+    alignContent: "center",
   },
   button: {
-    justifyContent: "flex-end",
-    marginEnd: 50,
+    justifyContent: "center",
     backgroundColor: colors.beige,
     width: "90%",
     alignItems: "center",
-    padding: 10,
-    borderRadius: 5,
+    padding: 15,
+    borderRadius: 15,
     marginTop: 20,
+    margin: 20,
+    justifyContent: "center",
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 20,
     color: colors.white,
   },
 });

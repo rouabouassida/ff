@@ -12,34 +12,30 @@ import { useTranslation } from "react-i18next"; // Importation du hook useTransl
 import colors from "../config/colors";
 import axios from "axios";
 
-const VacationManagement = () => {
+const GererRemote = () => {
   const { t, i18n } = useTranslation(); // Initialisation du hook useTranslation
-  const [conge, setConge] = useState([]);
+  const [Remote, setRemote] = useState([]);
   const [hoursWorked, setHoursWorked] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseConge = await axios.get(
-          "http://192.168.1.15:3000/conge/getVacationData"
+        const responseRemote = await axios.get(
+          "http://192.168.1.15:3000/remote/getRemoteData"
         );
-        const filteredConge = responseConge.data.filter((conge)=>conge.verified == false);       
-        setConge(filteredConge);
-      }catch (error) {
-          console.error("Erreur lors de l'envoi de la demande de congé:", error);
-          if (error.response && error.response.data) {
-            Alert.alert(t("errorTitle"), error.response.data.message);
-          } else {
-            Alert.alert(t("errorTitle"), "Une erreur s'est produite.");
-          }
-        }
+        const filteredRemote = responseRemote.data.filter((Remote)=>Remote.verified == false);       
+        setRemote(filteredRemote);
+      } catch (error) {
+        console.error("Error fetching data:", error.response.data.message);
+        Alert.alert(t("error"), t("fetchDataError"));
+      }
     };
 
     fetchData();
   }, []);
 
   const handleConfirmation = (item) => {
-    const { email, nomPrenom, dateDebut, dateFin } = item;
+    const { email, nomPrenom, date } = item;
     Alert.alert(t("confirmationTitle"), t("confirmationMessage2", { email }), [
       {
         text: t("noOption"),
@@ -53,13 +49,11 @@ const VacationManagement = () => {
         onPress: async () => {
           try {
             const res = await axios.post(
-              "http://192.168.1.16.6:3000/conge/verifier_conge",
+              "http://192.168.1.15:3000/remote/verify",
               {
                 email,
                 nomPrenom,
-                dateDebut,
-                dateFin,
-                typeConge
+                date,
               }
             );
 
@@ -78,51 +72,41 @@ const VacationManagement = () => {
     <ImageBackground
     blurRadius={10}
     style={styles.background}
-    source={require("../assets/a2.png")}
+    source={require("../assets/a3.png")}
   >
     <ScrollView horizontal={true} vertical={true}>
       <View style={styles.container}>
         <View style={styles.table}>
           <View style={styles.headerRow}>
-            <Text style={[styles.headerCell, styles.cell, { width: "16.6%" }]}>
-              {t("employeeName")}
+            <Text style={[styles.headerCell, styles.cell, { width: "20%" }]}>
+            {t("employeeName")}
             </Text>
-            <Text style={[styles.headerCell, styles.cell, { width: "16.6%" }]}>
-              {t("workedHours")}
+            <Text style={[styles.headerCell, styles.cell, { width: "40%" }]}>
+            {t("Email")}
             </Text>
-            <Text style={[styles.headerCell, styles.cell, { width: "16.6%" }]}>
-              {t("startDate")}
+            <Text style={[styles.headerCell, styles.cell, { width: "20%" }]}>
+            {t("date")}
             </Text>
-            <Text style={[styles.headerCell, styles.cell, { width: "16.6%" }]}>
-              {t("endDate")}
-            </Text>
-            <Text style={[styles.headerCell, styles.cell, { width: "16.6%" }]}>
-            {t("typeconge")}
-            </Text>
+            
             <Text style={[styles.headerCell, styles.cell, { width: "20%" }]}>
               {t("action")}
             </Text>
           </View>
-          {conge.map((item, index) => (
+          {Remote.map((item, index) => (
             <View key={index} style={styles.row}>
-              <Text style={[styles.cell, styles.text, { width: "16.6%" }]}>
+              <Text style={[styles.cell, styles.text, { width: "20%" }]}>
                 {item.nomPrenom}
               </Text>
-              <Text style={[styles.cell, styles.text, { width: "16.6%" }]}>
-                {item.hoursWorked}
+              <Text style={[styles.cell, styles.text, { width: "40%" }]}>
+                {item.email}
               </Text>
-              <Text style={[styles.cell, styles.text, { width: "16.6%" }]}>
-                {item.dateDebut}
+              <Text style={[styles.cell, styles.text, { width: "20%" }]}>
+                {item.date}
               </Text>
-              <Text style={[styles.cell, styles.text, { width: "16.6%" }]}>
-                {item.dateFin}
-              </Text>
-              <Text style={[styles.cell, styles.text, { width: "16.6%" }]}>
-                {item.typeConge}
-              </Text>
+              
               <TouchableOpacity
                 onPress={() => handleConfirmation(item)}
-                style={[styles.button, { width: "16.6%" }]}
+                style={[styles.button, { width: "20%" }]}
               >
                 <Text style={styles.buttonText}>{t("manage")}</Text>
               </TouchableOpacity>
@@ -141,6 +125,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 20,
     minWidth: "100%",
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   button: {
     backgroundColor: colors.beige,
@@ -164,12 +154,6 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
     backgroundColor: "#f2f2f2",
   },
-  background: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "stretch",
-
-  },
   row: {
     flexDirection: "row",
     borderBottomWidth: 1,
@@ -190,4 +174,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VacationManagement;
+export default GererRemote;

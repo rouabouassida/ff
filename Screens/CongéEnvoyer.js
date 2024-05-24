@@ -2,8 +2,11 @@ import React from "react";
 import { StyleSheet, View, Text, Image, ImageBackground } from "react-native";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
+import { useTranslation } from 'react-i18next'; // Importez le hook useTranslation
 
 function CongéEnvoyer(props) {
+  const { t } = useTranslation(); // Utilisez le hook useTranslation
+
   return (
     <ImageBackground
       blurRadius={50}
@@ -15,8 +18,8 @@ function CongéEnvoyer(props) {
           style={styles.logo}
           source={require("../assets/bonTravail1.png")}
         ></Image>
-        <Text style={styles.tagtitle}> Demande Envoyée... </Text>
-        <AppButton style={styles.btn}>OKEY</AppButton>
+        <Text style={styles.tagtitle}>{t("Request_Sent")}</Text> {/* Utilisez la traduction */}
+        <AppButton style={styles.btn}>{t("OK")}</AppButton> {/* Utilisez la traduction */}
       </View>
     </ImageBackground>
   );
@@ -26,6 +29,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
+    alignContent:"stretch",
+
     padding: 20,
   },
   logo: {

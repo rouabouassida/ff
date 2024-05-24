@@ -11,6 +11,7 @@ function AppButton({ title, onPress, color = "beige" }) {
     >
       <Text style={styles.text}>{title}</Text>
     </TouchableOpacity>
+    
   );
 }
 

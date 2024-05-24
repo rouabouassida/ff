@@ -7,13 +7,17 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  ImageBackground
 } from "react-native";
-import colors from "../config/colors"
+import { useTranslation } from 'react-i18next'; // Importer la fonction useTranslation pour la traduction
+import colors from "../config/colors";
 
 const EmployeeTable = () => {
+  const { t } = useTranslation(); // Initialiser la fonction t pour obtenir les traductions
   const [allEmployees, setAllEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filteredDate, setFilteredDate] = useState("");
+  const [filteredDatePlaceholder, setFilteredDatePlaceholder] = useState(""); // Ajouter un placeholder dynamique pour le champ de date filtrée
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -31,6 +35,11 @@ const EmployeeTable = () => {
     fetchEmployees();
   }, []);
 
+  useEffect(() => {
+    // Mettre à jour le placeholder en fonction de la langue sélectionnée
+    setFilteredDatePlaceholder(t('filterByDate'));
+  }, [t]);
+
   const handleFilterByDate = () => {
     // Convertir filteredDate en format "jj/mm/aaaa"
     const [day, month, year] = filteredDate.split("/");
@@ -43,7 +52,6 @@ const EmployeeTable = () => {
     const filteredEmployees = allEmployees.filter((employee) =>
       employee.entries.some((entry) => employee.date === formattedFilteredDate)
     );
-    console.log(filteredEmployees)
     setFilteredEmployees(filteredEmployees);
   };
   
@@ -53,15 +61,20 @@ const EmployeeTable = () => {
   };
   
   return (
+    <ImageBackground
+      blurRadius={10}
+      style={styles.background}
+      source={require("../assets/a2.png")}
+    >
 <View style={styles.container}>
   <TextInput
     style={styles.textField}
-    placeholder="Filtrer par date (jj/mm/aaaa)"
+    placeholder={filteredDatePlaceholder}
     value={filteredDate}
     onChangeText={(text) => setFilteredDate(text)}
   />
   <TouchableOpacity style={styles.button} onPress={handleFilterByDate}>
-    <Text style={styles.buttonText}>Filtrer</Text>
+    <Text style={styles.buttonText}>{t('filter')}</Text>
   </TouchableOpacity>
   <ScrollView
     style={styles.tableContainer}
@@ -69,12 +82,12 @@ const EmployeeTable = () => {
 >
     <View>
       <View style={styles.headerRow}>
-        <Text style={styles.headerCell}>Date </Text>
-        <Text style={styles.headerCell}>Nom</Text>
-        <Text style={styles.headerCell}>Date de entre</Text>
-        <Text style={styles.headerCell}>Date de sortie</Text>
-        <Text style={styles.headerCell}>Mode de travail</Text>
-        <Text style={styles.headerCell}>Nombre d'heures</Text>
+        <Text style={styles.headerCell}>{t('date')}</Text>
+        <Text style={styles.headerCell}>{t('name')}</Text>
+        <Text style={styles.headerCell}>{t('entryDate')}</Text>
+        <Text style={styles.headerCell}>{t('exitDate')}</Text>
+        <Text style={styles.headerCell}>{t('workMode')}</Text>
+        <Text style={styles.headerCell}>{t('hoursWorked')}</Text>
       </View>
       {filteredEmployees.map((employee) =>
         employee.entries.map((entry, index) => (
@@ -92,12 +105,7 @@ const EmployeeTable = () => {
   </ScrollView>
 
 </View>
-
-
-
-
-
-    
+</ImageBackground>
   );
 };
 
@@ -118,6 +126,12 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     borderRadius: 5,
+  },
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent:"stretch"
+
   },
   buttonText: {
     color: "white",
@@ -144,7 +158,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     paddingVertical: 10,
-    backgroundColor: colors.light, // Ajoutez la couleur de fond pour les en-têtes
+    backgroundColor: colors.claire, // Ajoutez la couleur de fond pour les en-têtes
   },
   headerCell: {
     flex: 1,

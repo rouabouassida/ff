@@ -1,21 +1,18 @@
 import React from "react";
 import { View, Text, ImageBackground, StyleSheet } from "react-native";
+import { useTranslation } from "react-i18next"; // Importez la fonction useTranslation
 
 function Confirmation(props) {
+  const { t } = useTranslation(); // Obtenez la fonction de traduction t()
+
   return (
     <ImageBackground
-      blurRadius={50}
+      blurRadius={10}
       style={styles.background}
-      source={require("../assets/welcomebackground.jpg")}
+      source={require("../assets/a2.png")}
     >
       <View style={styles.logoContainer}>
-        <Text style={styles.text}>
-          Un e-mail de réinitialisation de mot de passe a été envoyé à l'adresse
-          que vous avez fournie. Veuillez vérifier votre boîte de réception et
-          suivre les instructions pour réinitialiser votre mot de passe. Si vous
-          ne recevez pas l'e-mail dans quelques minutes, veuillez vérifier votre
-          dossier de courrier indésirable (spam).
-        </Text>
+        <Text style={styles.text}>{t("Reset_Password_Email_Sent")}</Text>
       </View>
     </ImageBackground>
   );
@@ -24,7 +21,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    alignItems: "center",
+    alignContent:"stretch"
   },
   logoContainer: {
     position: "absolute",
