@@ -190,7 +190,10 @@
     "successMessage1": "Leave request submitted successfully.",
     "errorTitle1": "Error",
     "typeconge": "reason for leave",
-    "This content appeared after a random time!": "This content appeared after a random time!"
+    "This content appeared after a random time!": "This content appeared after a random time!",
+    "Apply":"Apply",
+    "date_debut":"Start date ",
+    "date_fin":"End date"
 
   
   

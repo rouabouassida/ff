@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Alert ,ImageBackground} from "react-native";
+import { StyleSheet, Alert ,ImageBackground,ScrollView} from "react-native";
 import * as Yup from "yup";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -52,6 +52,8 @@ function SupprimerRH() {
     style={styles.background}
     source={require("../assets/a2.png")}
   >
+                        <ScrollView contentContainerStyle={styles.scrollView}>
+
     <Screen style={styles.container}>
       <AppForm
         initialValues={{ email: "" }}
@@ -69,6 +71,7 @@ function SupprimerRH() {
         <SubmitButton title={t("deleteButton")} />
       </AppForm>
     </Screen>
+    </ScrollView>
     </ImageBackground>
 
   );
@@ -77,7 +80,7 @@ function SupprimerRH() {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop: 290,
   },
   background: {
     flex: 1,

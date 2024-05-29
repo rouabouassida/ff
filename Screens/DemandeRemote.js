@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, ImageBackground ,ScrollView} from "react-native";
+import { Text, StyleSheet, ImageBackground ,ScrollView, Alert} from "react-native";
 import AppButton from "../components/AppButton";
 import colors from "../config/colors";
 import * as Yup from "yup";
@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next"; // Importer le hook de traductio
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import AppFormField from "../components/forms/AppFormField";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function DemandeRemote(props) {
   const { t } = useTranslation(); // Utiliser le hook de traduction
@@ -24,16 +25,25 @@ function DemandeRemote(props) {
 
   const handleEnvoyer = async (values) => {
     try {
+      const {dateDebut, dateFin}= values;
+      const fullname = await AsyncStorage.getItem("fullname");
+      const email = await AsyncStorage.getItem("email");
       // Envoie des données au back-end
       const response = await axios.post(
         "http://192.168.1.15:3000/remote/submit",
-        values
+        {
+          email,
+          nomPrenom: fullname,
+          dateDebut,
+          dateFin,
+        }
       );
       console.log(response.data);
       // Retour à l'écran précédent après avoir envoyé les données
       navigation.goBack();
     } catch (error) {
-      console.error("Erreur lors de l'envoi des données :", error);
+      Alert.alert(error.response.data.message)
+      console.error("Erreur lors de l'envoi des données :", error.response.data.message);
       // Gérer l'erreur ici
     }
   };
@@ -44,7 +54,7 @@ function DemandeRemote(props) {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-            <ScrollView  vertical={true}>
+                              <ScrollView contentContainerStyle={styles.scrollView}>
 
       <Screen style={styles.container}>
         <Formik
@@ -63,10 +73,7 @@ function DemandeRemote(props) {
                 name="nomPrenom"
                 style={styles.input}
               />
-              {touched.nomPrenom && errors.nomPrenom && (
-                <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
-              )}
-
+             
               <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -76,10 +83,7 @@ function DemandeRemote(props) {
                 icon="email"
                 style={styles.input}
               />
-              {touched.email && errors.email && (
-                <AppText style={{ color: "red" }}>{errors.email}</AppText>
-              )}
-
+             
               <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -93,9 +97,7 @@ function DemandeRemote(props) {
                 }}
                 style={styles.input}
               />
-              {touched.dateDebut && errors.dateDebut && (
-                <AppText style={{ color: "red" }}>{errors.dateDebut}</AppText>
-              )}
+              
               <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -109,9 +111,7 @@ function DemandeRemote(props) {
                 }}
                 style={styles.input}
               />
-              {touched.dateFin && errors.dateFin && (
-                <AppText style={{ color: "red" }}>{errors.dateFin}</AppText>
-              )}
+              
 
               <AppButton
                 style={styles.Button}

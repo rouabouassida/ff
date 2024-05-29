@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Alert, ImageBackground } from "react-native";
+import { StyleSheet, Alert, ImageBackground ,ScrollView} from "react-native";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
@@ -80,6 +80,8 @@ function EditPasswordRh() {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
+                                    <ScrollView contentContainerStyle={styles.scrollView}>
+
       <Screen style={styles.container}>
         <Formik
           initialValues={{
@@ -128,6 +130,7 @@ function EditPasswordRh() {
           )}
         </Formik>
       </Screen>
+      </ScrollView>
     </ImageBackground>
   );
 }
@@ -141,7 +144,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop:180,
   },
 });
 

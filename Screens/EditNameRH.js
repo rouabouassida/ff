@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ImageBackground, Alert, Text } from "react-native";
+import { StyleSheet, ImageBackground, Alert, Text,ScrollView } from "react-native";
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import AppFormField from "../components/forms/AppFormField";
@@ -66,6 +66,8 @@ const EditNameRH = ({ currentName, onSave }) => {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
+                              <ScrollView contentContainerStyle={styles.scrollView}>
+
       <Screen style={styles.container}>
         <AppForm
           initialValues={{ name: currentName }}
@@ -81,6 +83,7 @@ const EditNameRH = ({ currentName, onSave }) => {
           <SubmitButton title={t("save")} />
         </AppForm>
       </Screen>
+      </ScrollView>
     </ImageBackground>
   );
 };
@@ -93,7 +96,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop:290,
   },
 });
 

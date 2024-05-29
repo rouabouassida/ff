@@ -5,7 +5,8 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  Animated,Modal
+  Animated,
+  Modal,
 } from "react-native";
 import axios from "axios"; // Import d'Axios
 import colors from "../config/colors";
@@ -32,35 +33,38 @@ function Chrono(props) {
       "0"
     )}:${String(seconds).padStart(2, "0")}`;
   };
-  const [showContent, setShowContent] = useState(false);
+
+  const [showContent, setShowContent] = useState(true);
   const scaleValue = new Animated.Value(0);
 
-useEffect(() => {
-
+  useEffect(() => {
     const displaySequentialNotifications = async () => {
       const workMode = await AsyncStorage.getItem("workMode");
+
       if (workMode === "remote") {
         const numberOfNotifications = 5;
         for (let i = 0; i < numberOfNotifications; i++) {
-          
           const randomTime = Math.floor(Math.random() * 6000) + 3000;
-          await new Promise(resolve => setTimeout(resolve, randomTime));
+          await new Promise((resolve) => setTimeout(resolve, randomTime));
           setShowContent(true);
+          handlePause();
         }
       }
-    }
+    };
     displaySequentialNotifications();
   }, []);
 
   const { t, i18n } = useTranslation(); // Récupération de la fonction de traduction
 
-const handleClose = () => {
+  const handleClose = () => {
     Animated.timing(scaleValue, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => setShowContent(false));
+    handleContinue();
   };
+
   const animate = () => {
     Animated.timing(scaleValue, {
       toValue: 1,
@@ -196,14 +200,14 @@ const handleClose = () => {
           </TouchableOpacity>
         </View>
 
-       
         {elapsedTime > 0 && (
           <Text style={styles.elapsedTime}>
-           {t("Elapsed_Time")}  {formatTime(elapsedTime)}
+            {t("Elapsed_Time")} {formatTime(elapsedTime)}
           </Text>
         )}
       </View>
-         <Modal
+
+      <Modal
         animationType="fade"
         transparent={true}
         visible={showContent}
@@ -216,9 +220,9 @@ const handleClose = () => {
               { transform: [{ scale: contentScale }] },
             ]}
           >
-            <Text>{t('This content appeared after a random time!')}</Text>
+            <Text>{t("This content appeared after a random time!")}</Text>
             <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>{t('Close')}</Text>
+              <Text style={styles.closeButtonText}>{t("Close")}</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -237,7 +241,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    alignContent:"stretch"
+    alignContent: "stretch",
   },
   tagtitle: {
     fontSize: 1,
@@ -292,7 +296,8 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 7,
     width: 65,
-  },modalContainer: {
+  },
+  modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -312,7 +317,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
 });
 
 // Export du composant Chrono

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Alert ,ImageBackground} from "react-native";
+import { StyleSheet, View, Alert ,ImageBackground,ScrollView} from "react-native";
 import { useTranslation } from "react-i18next"; // Importer la fonction de traduction
 import * as Yup from "yup";
 import axios from "axios";
@@ -66,6 +66,8 @@ function ModifierEmploye() {
     style={styles.background}
     source={require("../assets/a2.png")}
   >
+                <ScrollView contentContainerStyle={styles.scrollView}>
+
     <Screen style={styles.container}>
       <AppForm
         initialValues={formData}
@@ -112,6 +114,7 @@ function ModifierEmploye() {
         <SubmitButton title={t("Modify Employee")} />
       </AppForm>
     </Screen>
+    </ScrollView>
     </ImageBackground>
   );
 }
@@ -119,7 +122,7 @@ function ModifierEmploye() {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop: 180,
   },
   background: {
     flex: 1,

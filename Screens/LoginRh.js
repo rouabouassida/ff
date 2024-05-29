@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View,ImageBackground } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ImageBackground,
+} from "react-native";
 import Screen from "../components/Screen";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
@@ -51,44 +58,45 @@ function LoginRh(props) {
 
   return (
     <ImageBackground
-    style={styles.background}
-    source={require("../assets/a2.png")}
-  >
-    <Screen style={styles.container}>
-      <Image style={styles.logo} source={require("../assets/logoF.png")} />
-      <Formik
-        initialValues={{ email: "", password: "" }}
-        onSubmit={handleLogin}
-        validationSchema={validationSchema}
-      >
-        {({ handleChange, handleSubmit, errors }) => (
-          <>
-            <AppTextInput
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="email-address"
-              onChangeText={handleChange("email")}
-              icon="email"
-              placeholder={t("Email")}
-            />
-            <AppText style={{ color: "red" }}>{errors.email}</AppText>
-            <AppPass
-              autoCapitalize="none"
-              autoCorrect={false}
-              icon="lock"
-              onChangeText={handleChange("password")}
-              placeholder={t("Password")}
-              style={{ flex: 1 }}
-            />
-            <AppText style={{ color: "red" }}>{errors.password}</AppText>
-            <AppButton title={t("Login")} onPress={handleSubmit} />
-          </>
-        )}
-      </Formik>
-      <TouchableOpacity onPress={handleForgetPassword}>
-        <Text style={styles.forget}>{t("Forgot Password?")}</Text>
-      </TouchableOpacity>
-    </Screen></ImageBackground>
+      style={styles.background}
+      source={require("../assets/a2.png")}
+    >
+      <Screen style={styles.container}>
+        <Image style={styles.logo} source={require("../assets/logoF.png")} />
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          onSubmit={handleLogin}
+          validationSchema={validationSchema}
+        >
+          {({ handleChange, handleSubmit, errors }) => (
+            <>
+              <AppTextInput
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                onChangeText={handleChange("email")}
+                icon="email"
+                placeholder={t("Email")}
+              />
+              <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              <AppPass
+                autoCapitalize="none"
+                autoCorrect={false}
+                icon="lock"
+                onChangeText={handleChange("password")}
+                placeholder={t("Password")}
+                style={{ flex: 1 }}
+              />
+              <AppText style={{ color: "red" }}>{errors.password}</AppText>
+              <AppButton title={t("Login")} onPress={handleSubmit} />
+            </>
+          )}
+        </Formik>
+        <TouchableOpacity onPress={handleForgetPassword}>
+          <Text style={styles.forget}>{t("Forgot Password?")}</Text>
+        </TouchableOpacity>
+      </Screen>
+    </ImageBackground>
   );
 }
 
@@ -96,15 +104,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     justifyContent: "center",
-    
-
   },
   background: {
     flex: 1,
     justifyContent: "center",
-    alignContent:"center",
-    alignContent:"stretch"
-
+    alignContent: "center",
+    alignContent: "stretch",
   },
   logo: {
     height: 150,
@@ -119,8 +124,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginTop: 50,
     alignSelf: "center",
-    textDecorationLine: "underline", 
-
+    textDecorationLine: "underline",
   },
 });
 

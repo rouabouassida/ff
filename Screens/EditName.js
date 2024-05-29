@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ImageBackground, Alert, Text } from "react-native";
+import { StyleSheet, ImageBackground, Alert, ScrollView, Text } from "react-native";
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import AppFormField from "../components/forms/AppFormField";
@@ -60,28 +60,29 @@ const EditName = ({ currentName, onSave }) => {
     }
   };
 
- 
   return (
     <ImageBackground
       blurRadius={10}
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-      <Screen style={styles.container}>
-        <AppForm
-          initialValues={{ name: currentName }}
-          onSubmit={handleNameChange}
-          validationSchema={validationSchema}
-        >
-          <AppFormField
-            autoCorrect={false}
-            icon="account"
-            name="name"
-            placeholder={t("name")}
-          />
-          <SubmitButton title={t("save")} />
-        </AppForm>
-      </Screen>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Screen style={styles.container}>
+          <AppForm
+            initialValues={{ name: currentName }}
+            onSubmit={handleNameChange}
+            validationSchema={validationSchema}
+          >
+            <AppFormField
+              autoCorrect={false}
+              icon="account"
+              name="name"
+              placeholder={t("name")}
+            />
+            <SubmitButton title={t("save")} />
+          </AppForm>
+        </Screen>
+      </ScrollView>
     </ImageBackground>
   );
 };
@@ -90,12 +91,15 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    alignContent:"stretch"
-
+    alignContent: "stretch",
   },
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop: 290,
+  },
+  scrollView: {
+    flexGrow: 1,
   },
 });
+
 export default EditName;

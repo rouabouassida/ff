@@ -16,19 +16,12 @@ import { useNavigation } from "@react-navigation/native";
 const verifyExistingEntry = async (fullname) => {
   try {
     const response = await axios.post(
-      "http://192.168.1.15:3000/employees/getActiveEmployee",
+      "http://192.168.1.15:3000/employees/verifyExistingEntry",
       {
         fullname,
       }
     );
-    if (response.data.message === "Employee exist") {
-      await AsyncStorage.removeItem("workedTime");
-      await AsyncStorage.setItem(
-        "workedTime",
-        response.data.entry[0].hoursWorked
-      );
-      return true;
-    }
+    return response.data.exists;
   } catch (error) {
     console.error("Error verifying existing entry:", error);
     return false;
@@ -53,18 +46,20 @@ function PointageUser(props) {
   const handleCommencer = async () => {
     try {
       if (!workMode) {
-        Alert.alert(t("Select a work type"));
+        Alert.alert("Sélectionnez un type de travail");
         return;
       }
 
       const fullname = await AsyncStorage.getItem("fullname");
       const token = await AsyncStorage.getItem("userToken");
+      await AsyncStorage.setItem("workMode", workMode);
 
       const entryData = {
         entryTime: `${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`,
         workMode: workMode,
         fullname: fullname,
       };
+
       if (!(await verifyExistingEntry(fullname))) {
         const response = await axios.post(
           "http://192.168.1.15:3000/employees/createEntry",
@@ -75,19 +70,18 @@ function PointageUser(props) {
             },
           }
         );
-
         if (response) {
           const Entry = response.data.data;
           await AsyncStorage.setItem("entryId", Entry._id);
         }
       }
+
       navigation.navigate("Chrono");
     } catch (error) {
-      console.error(t("Error saving data:"), error);
-      Alert.alert(t("Error"), t("An error occurred while saving data."));
+      console.error("Erreur lors de la sauvegarde des données :", error);
+      Alert.alert("Erreur lors de la sauvegarde des données");
     }
   };
-
   return (
     <ImageBackground
       style={styles.background}
@@ -122,6 +116,7 @@ function PointageUser(props) {
   );
 }
 
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -131,8 +126,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "cernter",
-
+    alignItems: "center",
     marginLeft: 20,
     marginTop: "auto",
     paddingEnd: 20,

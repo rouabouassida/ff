@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Alert ,ImageBackground} from "react-native";
+import { StyleSheet, Alert ,ImageBackground,ScrollView} from "react-native";
 import * as Yup from "yup";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -43,6 +43,8 @@ function AjouterRh({ navigation }) {
     style={styles.background}
     source={require("../assets/a2.png")}
   >
+                <ScrollView contentContainerStyle={styles.scrollView}>
+
     <Screen style={styles.container}>
       <Formik
         initialValues={{ fullname: "", email: "", password: "" }}
@@ -91,6 +93,7 @@ function AjouterRh({ navigation }) {
         )}
       </Formik>
     </Screen>
+    </ScrollView>
     </ImageBackground>
   );
 }
@@ -98,7 +101,7 @@ function AjouterRh({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop: "auto",
+    marginTop: 210,
 
   },
   background: {

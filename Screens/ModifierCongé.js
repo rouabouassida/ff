@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, ImageBackground } from "react-native";
+import { Text, StyleSheet, ImageBackground ,ScrollView} from "react-native";
 import AppButton from "../components/AppButton";
 import colors from "../config/colors";
 import * as Yup from "yup";
@@ -32,6 +32,8 @@ function ModifierCongé(props) {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
+                  <ScrollView contentContainerStyle={styles.scrollView}>
+
       <Screen style={styles.container}>
         <Formik
           initialValues={{
@@ -54,10 +56,7 @@ function ModifierCongé(props) {
                 name="nomPrenom"
                 style={styles.input}
               />
-              {touched.nomPrenom && errors.nomPrenom && (
-                <AppText style={{ color: "red" }}>{errors.nomPrenom}</AppText>
-              )}
-
+              
               <AppFormField
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -67,9 +66,7 @@ function ModifierCongé(props) {
                 icon="email"
                 style={styles.input}
               />
-              {touched.email && errors.email && (
-                <AppText style={{ color: "red" }}>{errors.email}</AppText>
-              )}
+             
 
               <AppFormField
                 autoCapitalize="none"
@@ -79,9 +76,7 @@ function ModifierCongé(props) {
                 icon="calendar"
                 style={styles.input}
               />
-              {touched.NVdateDébut && errors.NVdateDébut && (
-                <AppText style={{ color: "red" }}>{errors.NVdateDébut}</AppText>
-              )}
+             
 
               <AppFormField
                 autoCorrect={false}
@@ -90,9 +85,7 @@ function ModifierCongé(props) {
                 icon="calendar"
                 style={styles.input}
               />
-              {touched.NVdateFin && errors.NVdateFin && (
-                <AppText style={{ color: "red" }}>{errors.NVdateFin}</AppText>
-              )}
+             
 
               <AppButton
                 style={styles.Button}
@@ -103,6 +96,7 @@ function ModifierCongé(props) {
           )}
         </Formik>
       </Screen>
+      </ScrollView>
     </ImageBackground>
   );
 }

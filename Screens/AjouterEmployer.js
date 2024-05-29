@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Alert, Text,ImageBackground } from "react-native";
+import { StyleSheet, Alert, Text,ImageBackground ,ScrollView} from "react-native";
 import * as Yup from "yup";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
@@ -44,6 +44,8 @@ function AjouterEmployer() {
     style={styles.background}
     source={require("../assets/a2.png")}
   >
+            <ScrollView contentContainerStyle={styles.scrollView}>
+
     <Screen style={styles.container}>
       <AppForm
         initialValues={{ fullname: "", email: "", password: "" }}
@@ -76,7 +78,8 @@ function AjouterEmployer() {
         />
         <SubmitButton title={t("Add_Employer")} />
       </AppForm>
-    </Screen></ImageBackground>
+    </Screen>
+    </ScrollView></ImageBackground>
   );
 }
 

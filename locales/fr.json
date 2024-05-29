@@ -187,7 +187,11 @@
   "successMessage1": "Demande de congé soumise avec succès.",
   "errorTitle1": "Erreur",
   "typeconge": "raison de congé",
-  "This content appeared after a random time!": "Ce contenu est apparu après un temps aléatoire!"
+  "This content appeared after a random time!": "Ce contenu est apparu après un temps aléatoire!",
+  "Apply":"Appliquer",
+  "date_debut":"Date début",
+  "date_fin":"Date fin",
+  "Modify Employee":"Modifier employe"
 
 
 

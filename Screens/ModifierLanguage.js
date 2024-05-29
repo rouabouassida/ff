@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 10,
     paddingVertical: 15,
-    paddingHorizontal: 150,
+    paddingHorizontal: 130
     
   },
   text: {
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0", // Couleur de fond différente pour la langue sélectionnée
   },
   languageText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#333",
   },
   applyButton: {
