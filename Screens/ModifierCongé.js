@@ -1,18 +1,18 @@
-import React from "react";
-import { Text, StyleSheet, ImageBackground ,ScrollView} from "react-native";
+import React, { useState } from "react";
+import { Text, StyleSheet, ImageBackground, ScrollView, ActivityIndicator } from "react-native";
 import AppButton from "../components/AppButton";
 import colors from "../config/colors";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
-import AppText from "../components/AppText";
 import AppFormField from "../components/forms/AppFormField";
 import { Formik } from "formik";
 import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next"; // Import the useTranslation hook
+import { useTranslation } from "react-i18next";
 
 function ModifierCongé(props) {
   const navigation = useNavigation();
-  const { t } = useTranslation(); // Utilize the translation function
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
   const validationSchema = Yup.object().shape({
     nomPrenom: Yup.string().required().label("Nom et prénom"),
@@ -22,8 +22,14 @@ function ModifierCongé(props) {
   });
 
   const handleEnvoyer = (values) => {
-    console.log(values);
-    navigation.goBack();
+    setLoading(true);
+    console.log(values); // Placeholder for sending data to the server
+
+    // Simulating a delay for demonstration purposes
+    setTimeout(() => {
+      setLoading(false);
+      navigation.goBack();
+    }, 2000);
   };
 
   return (
@@ -32,70 +38,70 @@ function ModifierCongé(props) {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-                  <ScrollView contentContainerStyle={styles.scrollView}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Screen style={styles.container}>
+          <Formik
+            initialValues={{
+              nomPrenom: "",
+              email: "",
+              NVdateDébut: "",
+              NVdateFin: "",
+            }}
+            onSubmit={handleEnvoyer}
+            validationSchema={validationSchema}
+          >
+            {({ handleChange, handleSubmit, errors, touched }) => (
+              <>
+                <Text style={styles.title}>{t("Modify Leave")}!</Text>
 
-      <Screen style={styles.container}>
-        <Formik
-          initialValues={{
-            nomPrenom: "",
-            email: "",
-            NVdateDébut: "",
-            NVdateFin: "",
-          }}
-          onSubmit={handleEnvoyer}
-          validationSchema={validationSchema}
-        >
-          {({ handleChange, handleSubmit, errors, touched }) => (
-            <>
-              <Text style={styles.title}>{t("Modify Leave")}!</Text>
-
-              <AppFormField
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder={t("Name and Surname")}
-                name="nomPrenom"
-                style={styles.input}
-              />
+                <AppFormField
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholder={t("Name and Surname")}
+                  name="nomPrenom"
+                  icon="account"
+                  style={styles.input}
+                />
               
-              <AppFormField
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder={t("Email")}
-                keyboardType="email-address"
-                name="email"
-                icon="email"
-                style={styles.input}
-              />
-             
+                <AppFormField
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholder={t("Email")}
+                  keyboardType="email-address"
+                  name="email"
+                  icon="email"
+                  style={styles.input}
+                />
 
-              <AppFormField
-                autoCapitalize="none"
-                autoCorrect={false}
-                placeholder={t("Enter new start date")}
-                name="NVdateDébut"
-                icon="calendar"
-                style={styles.input}
-              />
-             
+                <AppFormField
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholder={t("startDatePlaceholder")}
+                  name="NVdateDébut"
+                  icon="calendar"
+                  style={styles.input}
+                />
 
-              <AppFormField
-                autoCorrect={false}
-                placeholder={t("Enter new end date of leave")}
-                name="NVdateFin"
-                icon="calendar"
-                style={styles.input}
-              />
-             
+                <AppFormField
+                  autoCorrect={false}
+                  placeholder={t("endDatePlaceholder")}
+                  name="NVdateFin"
+                  icon="calendar"
+                  style={styles.input}
+                />
 
-              <AppButton
-                style={styles.Button}
-                title={t("Modify Leave")}
-                onPress={handleSubmit}
-              />
-            </>
-          )}
-        </Formik>
-      </Screen>
+                <AppButton
+                  style={styles.Button}
+                  title={loading ? t("Modifying...") : t("Modify Leave")}
+                  onPress={handleSubmit}
+                  disabled={loading}
+                />
+
+                {loading && <ActivityIndicator color={colors.primary} />}
+              </>
+            )}
+          </Formik>
+        </Screen>
       </ScrollView>
     </ImageBackground>
   );
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    marginTop: 15,
   },
   title: {
     fontSize: 20,
@@ -118,7 +125,6 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     marginTop: 260,
     textAlign: "center",
-
   },
   input: {
     borderColor: "#ddd",

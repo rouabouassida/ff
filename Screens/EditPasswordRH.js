@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Alert, ImageBackground ,ScrollView} from "react-native";
+import {
+  StyleSheet,
+  Alert,
+  ImageBackground,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import * as Yup from "yup";
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
@@ -26,6 +33,7 @@ const validationSchema = Yup.object().shape({
 
 function EditPasswordRh() {
   const [rhId, setUserId] = useState("");
+  const [loading, setLoading] = useState(false); // État de chargement
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -52,6 +60,8 @@ function EditPasswordRh() {
       return;
     }
 
+    setLoading(true); // Activer l'état de chargement
+
     try {
       const response = await axios.put(
         "http://192.168.1.15:3000/rh/edit-Password",
@@ -71,6 +81,8 @@ function EditPasswordRh() {
         "Erreur",
         "Une erreur s'est produite lors de la modification du mot de passe."
       );
+    } finally {
+      setLoading(false); // Désactiver l'état de chargement une fois la requête terminée
     }
   };
 
@@ -80,56 +92,57 @@ function EditPasswordRh() {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-                                    <ScrollView contentContainerStyle={styles.scrollView}>
-
-      <Screen style={styles.container}>
-        <Formik
-          initialValues={{
-            currentPassword: "",
-            newPassword: "",
-            confirmPassword: "",
-          }}
-          onSubmit={handlePasswordChange}
-          validationSchema={validationSchema}
-        >
-          {({ handleChange, handleSubmit, errors }) => (
-            <>
-              <AppPass
-                autoCorrect={false}
-                icon="lock"
-                name="currentPassword"
-                placeholder={t("currentPassword")}
-                style={{ flex: 1 }}
-              />
-              <AppText style={{ color: "red" }}>
-                {errors.currentPassword}
-              </AppText>
-
-              <AppPass
-                autoCorrect={false}
-                icon="lock"
-                name="newPassword"
-                placeholder={t("newPassword")}
-                style={{ flex: 1 }}
-              />
-              <AppText style={{ color: "red" }}>{errors.newPassword}</AppText>
-
-              <AppPass
-                autoCorrect={false}
-                icon="lock"
-                name="confirmPassword"
-                placeholder={t("confirmPassword")}
-                style={{ flex: 1 }}
-              />
-              <AppText style={{ color: "red" }}>
-                {errors.confirmPassword}
-              </AppText>
-
-              <SubmitButton title={t("save")} />
-            </>
-          )}
-        </Formik>
-      </Screen>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Screen style={styles.container}>
+          <Formik
+            initialValues={{
+              currentPassword: "",
+              newPassword: "",
+              confirmPassword: "",
+            }}
+            onSubmit={handlePasswordChange}
+            validationSchema={validationSchema}
+          >
+            {({ handleChange, handleSubmit, errors }) => (
+              <>
+                <AppPass
+                  autoCorrect={false}
+                  icon="lock"
+                  name="currentPassword"
+                  placeholder={t("currentPassword")}
+                  style={{ flex: 1 }}
+                />
+                <AppText style={{ color: "red" }}>
+                  {errors.currentPassword}
+                </AppText>
+                <AppPass
+                  autoCorrect={false}
+                  icon="lock"
+                  name="newPassword"
+                  placeholder={t("newPassword")}
+                  style={{ flex: 1 }}
+                />
+                <AppText style={{ color: "red" }}>{errors.newPassword}</AppText>
+                <AppPass
+                  autoCorrect={false}
+                  icon="lock"
+                  name="confirmPassword"
+                  placeholder={t("confirmPassword")}
+                  style={{ flex: 1 }}
+                />
+                <AppText style={{ color: "red" }}>
+                  {errors.confirmPassword}
+                </AppText>
+                <SubmitButton title={t("save")} />
+                {loading && (
+                  <Text>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                  </Text>
+                )}
+              </>
+            )}
+          </Formik>
+        </Screen>
       </ScrollView>
     </ImageBackground>
   );
@@ -139,12 +152,11 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     justifyContent: "flex-start",
-    alignContent:"stretch"
-
+    alignContent: "stretch",
   },
   container: {
     padding: 10,
-    marginTop:180,
+    marginTop: 180,
   },
 });
 

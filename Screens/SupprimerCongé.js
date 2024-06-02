@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Text,
   StyleSheet,
   ImageBackground,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import colors from "../config/colors";
 import * as Yup from "yup";
@@ -13,7 +14,7 @@ import AppForm from "../components/forms/AppForm";
 import SubmitButton from "../components/forms/SubmitButton";
 import AppFormField from "../components/forms/AppFormField";
 import axios from "axios";
-import { useTranslation } from "react-i18next"; // Importation correcte du hook useTranslation pour la traduction
+import { useTranslation } from "react-i18next";
 
 const validationSchema = Yup.object().shape({
   nomPrenom: Yup.string().required().label("Nom et Prénom"),
@@ -23,11 +24,13 @@ const validationSchema = Yup.object().shape({
 });
 
 function SupprimerConge({ navigation }) {
-  const { t } = useTranslation(); // Utilisation correcte du hook useTranslation pour obtenir la fonction de traduction t()
+  const { t } = useTranslation();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
+    setLoading(true);
+
     try {
-      // Correction ici : Assurez-vous que la structure de données envoyée correspond à celle attendue par votre API.
       const response = await axios.delete(
         "http://192.168.1.15:3000/conge/supprimer-conge",
         {
@@ -36,11 +39,10 @@ function SupprimerConge({ navigation }) {
       );
 
       console.log(response.data);
-      Alert.alert(t("successTitle"), t("deleteSuccess")); // Utilisation correcte de la fonction de traduction t() pour traduire les alertes
+      Alert.alert(t("successTitle"), t("deleteSuccess"));
       navigation.goBack();
     } catch (error) {
       console.error("Erreur lors de la suppression du congé:", error);
-      // Amélioration ici : Affichage d'un message d'erreur plus informatif pour l'utilisateur.
       let errorMessage = t("deleteError");
       if (
         error.response &&
@@ -49,7 +51,9 @@ function SupprimerConge({ navigation }) {
       ) {
         errorMessage = error.response.data.message;
       }
-      Alert.alert(t("errorTitle"), errorMessage); // Utilisation correcte de la fonction de traduction t() pour traduire les alertes
+      Alert.alert(t("errorTitle"), errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +97,10 @@ function SupprimerConge({ navigation }) {
               placeholder="Date de fin (JJ/MM/AAAA)"
               icon="calendar-range"
             />
-            <SubmitButton title="Supprimer" />
+            <SubmitButton
+              title={loading ? "Suppression en cours..." : "Supprimer"}
+              loading={loading}
+            />
           </AppForm>
         </Screen>
       </ScrollView>
@@ -109,6 +116,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    marginTop: 15,
   },
   title: {
     fontSize: 20,

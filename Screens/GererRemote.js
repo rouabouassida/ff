@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ImageBackground
+  ImageBackground,
+  RefreshControl
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import colors from "../config/colors";
@@ -14,26 +15,31 @@ import axios from "axios";
 
 const GererRemote = () => {
   const { t } = useTranslation();
-  const [Remote, setRemote] = useState([]);
+  const [remote, setRemote] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseRemote = await axios.get(
-          "http://192.168.1.15:3000/remote/getRemoteData"
+  const fetchData = async () => {
+    try {
+      const responseRemote = await axios.get(
+        "http://192.168.1.15:3000/remote/getRemoteData"
+      );
+      if (responseRemote && responseRemote.data) {
+        const filteredRemote = responseRemote.data.filter(
+          (remote) => !remote.verified
         );
-        if (responseRemote && responseRemote.data) {
-          const filteredRemote = responseRemote.data.filter((Remote) => !Remote.verified);
-          setRemote(filteredRemote);
-        } else {
-          Alert.alert(t("error"), t("fetchDataError"));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        setRemote(filteredRemote);
+      } else {
         Alert.alert(t("error"), t("fetchDataError"));
       }
-    };
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      Alert.alert(t("error"), t("fetchDataError"));
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -75,13 +81,24 @@ const GererRemote = () => {
     ]);
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
+
   return (
     <ImageBackground
       blurRadius={10}
       style={styles.background}
       source={require("../assets/a3.png")}
     >
-      <ScrollView horizontal={true} vertical={true}>
+      <ScrollView
+        horizontal={true}
+        vertical={true}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.container}>
           <View style={styles.table}>
             <View style={styles.headerRow}>
@@ -101,7 +118,7 @@ const GererRemote = () => {
                 {t("action")}
               </Text>
             </View>
-            {Remote.map((item, index) => (
+            {remote.map((item, index) => (
               <View key={index} style={styles.row}>
                 <Text style={[styles.cell, styles.text, { width: "20%" }]}>
                   {item.nomPrenom}

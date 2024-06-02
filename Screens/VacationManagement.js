@@ -6,39 +6,44 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ImageBackground
+  ImageBackground,
+  RefreshControl
 } from "react-native";
-import { useTranslation } from "react-i18next"; // Importation du hook useTranslation
+import { useTranslation } from "react-i18next";
 import colors from "../config/colors";
 import axios from "axios";
 
 const VacationManagement = () => {
-  const { t } = useTranslation(); // Initialisation du hook useTranslation
+  const { t } = useTranslation();
   const [conge, setConge] = useState([]);
-  const [hoursWorked, setHoursWorked] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const responseConge = await axios.get(
+        "http://192.168.1.15:3000/conge/getVacationData"
+      );
+      if (responseConge && responseConge.data) {
+        const filteredConge = responseConge.data.filter(
+          (conge) => conge.verified == false
+        );
+        setConge(filteredConge);
+      } else {
+        Alert.alert(t("errorTitle"), t("noDataReceived"));
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la demande de congé:", error);
+      if (error.response && error.response.data) {
+        Alert.alert(t("errorTitle"), error.response.data.message);
+      } else {
+        Alert.alert(t("errorTitle"), "Une erreur s'est produite.");
+      }
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseConge = await axios.get(
-          "http://192.168.1.15:3000/conge/getVacationData"
-        );
-        if (responseConge && responseConge.data) {
-          const filteredConge = responseConge.data.filter((conge) => conge.verified == false);
-          setConge(filteredConge);
-        } else {
-          Alert.alert(t("errorTitle"), t("noDataReceived"));
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'envoi de la demande de congé:", error);
-        if (error.response && error.response.data) {
-          Alert.alert(t("errorTitle"), error.response.data.message);
-        } else {
-          Alert.alert(t("errorTitle"), "Une erreur s'est produite.");
-        }
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -63,7 +68,7 @@ const VacationManagement = () => {
                 nomPrenom,
                 dateDebut,
                 dateFin,
-                typeConge
+                typeConge,
               }
             );
 
@@ -79,11 +84,18 @@ const VacationManagement = () => {
             } else {
               Alert.alert(t("errorTitle"), t("requestFailed"));
             }
-            console.log(error.response ? error.response.data.message : error);
+            console.log(
+              error.response ? error.response.data.message : error
+            );
           }
         },
       },
     ]);
+  };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
   };
 
   return (
@@ -92,7 +104,13 @@ const VacationManagement = () => {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-      <ScrollView horizontal={true} vertical={true}>
+      <ScrollView
+        horizontal={true}
+        vertical={true}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.container}>
           <View style={styles.table}>
             <View style={styles.headerRow}>

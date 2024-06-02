@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ImageBackground, Alert, ScrollView, Text } from "react-native";
+import {
+  StyleSheet,
+  ImageBackground,
+  Alert,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import AppFormField from "../components/forms/AppFormField";
@@ -17,6 +24,8 @@ const validationSchema = Yup.object().shape({
 const EditName = ({ currentName, onSave }) => {
   const { t } = useTranslation(); // Utilisation de la fonction de traduction
   const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(false); // État de chargement
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -38,9 +47,11 @@ const EditName = ({ currentName, onSave }) => {
     const { name } = values;
 
     if (!userId) {
-      Alert.alert(t("error"), t("userIdUnavailable")); // Utilisation de la traduction pour "error" et "userIdUnavailable"
+      Alert.alert(t("error"), t("userIdUnavailable"));
       return;
     }
+
+    setLoading(true); // Activer l'état de chargement
 
     try {
       const response = await axios.put(
@@ -52,11 +63,13 @@ const EditName = ({ currentName, onSave }) => {
       );
 
       console.log(response.data);
-      Alert.alert(t("success"), t("nameChangedSuccessfully")); // Utilisation de la traduction pour "success" et "nameChangedSuccessfully"
+      Alert.alert(t("success"), t("nameChangedSuccessfully"));
       navigation.navigate("FonctionaliterUser");
     } catch (error) {
       console.error(error.response ? error.response.data : error);
-      Alert.alert(t("error"), t("nameChangeError")); // Utilisation de la traduction pour "error" et "nameChangeError"
+      Alert.alert(t("error"), t("nameChangeError"));
+    } finally {
+      setLoading(false); // Désactiver l'état de chargement une fois la requête terminée
     }
   };
 
@@ -81,6 +94,11 @@ const EditName = ({ currentName, onSave }) => {
             />
             <SubmitButton title={t("save")} />
           </AppForm>
+          {loading && (
+            <Text>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </Text>
+          )}
         </Screen>
       </ScrollView>
     </ImageBackground>

@@ -7,17 +7,22 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  ImageBackground
+  ImageBackground,
+  ActivityIndicator,
+  RefreshControl
 } from "react-native";
-import { useTranslation } from 'react-i18next'; // Importer la fonction useTranslation pour la traduction
+import { useTranslation } from 'react-i18next';
 import colors from "../config/colors";
+import Icon from "../components/Icon";
 
 const EmployeeTable = () => {
-  const { t } = useTranslation(); // Initialiser la fonction t pour obtenir les traductions
+  const { t } = useTranslation();
   const [allEmployees, setAllEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [filteredDate, setFilteredDate] = useState("");
-  const [filteredDatePlaceholder, setFilteredDatePlaceholder] = useState(""); // Ajouter un placeholder dynamique pour le champ de date filtrée
+  const [filteredDatePlaceholder, setFilteredDatePlaceholder] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -26,9 +31,12 @@ const EmployeeTable = () => {
           "http://192.168.1.15:3000/employees/getAllEmployees/"
         );
         setAllEmployees(response.data);
-        setFilteredEmployees(response.data); // Initialize filtered employees with all employees
+        setFilteredEmployees(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des employés :", error);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
     };
 
@@ -36,19 +44,16 @@ const EmployeeTable = () => {
   }, []);
 
   useEffect(() => {
-    // Mettre à jour le placeholder en fonction de la langue sélectionnée
     setFilteredDatePlaceholder(t('filterByDate'));
   }, [t]);
 
   const handleFilterByDate = () => {
-    // Convertir filteredDate en format "jj/mm/aaaa"
     const [day, month, year] = filteredDate.split("/");
     const formattedFilteredDate = `${day.padStart(2, "0")}/${month.padStart(
       2,
       "0"
     )}/${year}`;
   
-    // Filtrer les employés par la date fournie
     const filteredEmployees = allEmployees.filter((employee) =>
       employee.entries.some((entry) => employee.date === formattedFilteredDate)
     );
@@ -60,52 +65,61 @@ const EmployeeTable = () => {
     return `${day.padStart(2, "0")}/${month.padStart(2, "0")}/${year}`;
   };
   
+  const onRefresh = () => {
+    setRefreshing(true);
+  };
+
   return (
     <ImageBackground
       blurRadius={10}
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-<View style={styles.container}>
-  <TextInput
-    style={styles.textField}
-    placeholder={filteredDatePlaceholder}
-    value={filteredDate}
-    onChangeText={(text) => setFilteredDate(text)}
-  />
-  <TouchableOpacity style={styles.button} onPress={handleFilterByDate}>
-    <Text style={styles.buttonText}>{t('filter')}</Text>
-  </TouchableOpacity>
-  <ScrollView
-    style={styles.tableContainer}
-    
->
-    <View>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerCell}>{t('date')}</Text>
-        <Text style={styles.headerCell}>{t('name')}</Text>
-        <Text style={styles.headerCell}>{t('entryDate')}</Text>
-        <Text style={styles.headerCell}>{t('exitDate')}</Text>
-        <Text style={styles.headerCell}>{t('workMode')}</Text>
-        <Text style={styles.headerCell}>{t('hoursWorked')}</Text>
-      </View>
-      {filteredEmployees.map((employee) =>
-        employee.entries.map((entry, index) => (
-          <View key={`${employee._id}-${index}`} style={styles.row}>
-            <Text style={styles.cell}> {employee.date}</Text>
-            <Text style={styles.cell}>{entry.fullname}</Text>
-            <Text style={styles.cell}>{entry.entryTime}</Text>
-            <Text style={styles.cell}>{entry.exitTime}</Text>
-            <Text style={styles.cell}>{entry.workMode}</Text>
-            <Text style={styles.cell}>{entry.hoursWorked}</Text>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.textField}
+          placeholder={filteredDatePlaceholder}
+          value={filteredDate}
+          onChangeText={(text) => setFilteredDate(text)}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleFilterByDate}>
+          <Text style={styles.buttonText}>{t('filter')}</Text>
+        </TouchableOpacity>
+        <ScrollView
+          style={styles.tableContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View>
+            <View style={styles.headerRow}>
+              <Text style={styles.headerCell}>{t('date')}</Text>
+              <Text style={styles.headerCell}>{t('name')}</Text>
+              <Text style={styles.headerCell}>{t('entryDate')}</Text>
+              <Text style={styles.headerCell}>{t('exitDate')}</Text>
+              <Text style={styles.headerCell}>{t('workMode')}</Text>
+              <Text style={styles.headerCell}>{t('hoursWorked')}</Text>
+            </View>
+            {loading ? (
+              <ActivityIndicator size="large" color={colors.primary} />
+            ) : (
+              filteredEmployees.map((employee) =>
+                employee.entries.map((entry, index) => (
+                  <View key={`${employee._id}-${index}`} style={styles.row}>
+                    <Text style={styles.cell}> {employee.date}</Text>
+                    <Text style={styles.cell}>{entry.fullname}</Text>
+                    <Text style={styles.cell}>{entry.entryTime}</Text>
+                    <Text style={styles.cell}>{entry.exitTime}</Text>
+                    <Text style={styles.cell}>{entry.workMode}</Text>
+                    <Text style={styles.cell}>{entry.hoursWorked}</Text>
+                  </View>
+                ))
+              )
+            )}
           </View>
-        ))
-      )}
-    </View>
-  </ScrollView>
-
-</View>
-</ImageBackground>
+        </ScrollView>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -131,7 +145,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignContent:"stretch"
-
   },
   buttonText: {
     color: "white",
@@ -158,12 +171,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
     paddingVertical: 10,
-    backgroundColor: colors.claire, // Ajoutez la couleur de fond pour les en-têtes
+    backgroundColor: colors.claire,
   },
   headerCell: {
     flex: 1,
     padding: 5,
-    fontWeight: "bold", // Ajoutez la mise en forme en gras pour les en-têtes
+    fontWeight: "bold",
   },
 });
 

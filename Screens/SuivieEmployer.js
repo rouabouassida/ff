@@ -8,6 +8,7 @@ import {
   Alert,
   ImageBackground,
   ScrollView,
+  ActivityIndicator
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
@@ -18,6 +19,7 @@ import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
 import AppFormField from "../components/forms/AppFormField";
 import colors from "../config/colors";
+import Icon from "../components/Icon";
 
 function SuivieEmployer() {
   const navigation = useNavigation();
@@ -27,8 +29,10 @@ function SuivieEmployer() {
   const [todayDate, setTodayDate] = useState(
     new Date().toLocaleDateString("fr-FR")
   ); // Date d'aujourd'hui
+  const [loading, setLoading] = useState(false);
 
   const handleFollow = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
         `http://192.168.1.15:3000/employees/getEmployeeInfoForToday/${name}`
@@ -40,17 +44,20 @@ function SuivieEmployer() {
         t("errorTitle"),
         t("errorMessage")
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-  
-    <ScrollView contentContainerStyle={styles.scrollView}>
     <ImageBackground
     blurRadius={10}
     style={styles.background}
     source={require("../assets/a2.png")}
   >
+  
+    <ScrollView contentContainerStyle={styles.scrollView}>
+  
       <Screen style={styles.container}>
         <View style={styles.dateContainer}>
           <Text style={styles.dateText}>{t("todayDateLabel")}: {todayDate}</Text>
@@ -59,11 +66,12 @@ function SuivieEmployer() {
           <AppFormField
             autoCorrect={false}
             name="fullname"
+            icon="account"
             placeholder={t("employeeNamePlaceholder")}
             onChangeText={(text) => setName(text)}
             value={name}
           />
-          <SubmitButton title={t("followEmployeeButton")} />
+          <SubmitButton title={loading ? t("Loading...") : t("followEmployeeButton")} disabled={loading} />
         </AppForm>
         <View style={styles.container}>
           {employeeInfo && (
@@ -87,9 +95,11 @@ function SuivieEmployer() {
             </View>
           )}
         </View>
+        {loading && <ActivityIndicator size="large" color={colors.primary} />}
       </Screen>
-      </ImageBackground>
+     
     </ScrollView>
+    </ImageBackground>
     
   );
 }
@@ -98,7 +108,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    marginTop: 120,
+    marginTop:130,
     
   },
   background: {
@@ -112,6 +122,8 @@ const styles = StyleSheet.create({
   dateText: {
     fontSize: 18,
     fontWeight: "bold",
+    color: colors.caramel,
+
   },
   employeeEntryContainer: {
     marginTop: 20,

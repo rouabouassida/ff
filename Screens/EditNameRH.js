@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, ImageBackground, Alert, Text,ScrollView } from "react-native";
+import {
+  StyleSheet,
+  ImageBackground,
+  Alert,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import AppForm from "../components/forms/AppForm";
 import Screen from "../components/Screen";
 import AppFormField from "../components/forms/AppFormField";
@@ -17,6 +24,7 @@ const validationSchema = Yup.object().shape({
 const EditNameRH = ({ currentName, onSave }) => {
   const { t } = useTranslation();
   const [userId, setUserId] = useState("");
+  const [loading, setLoading] = useState(false); // État de chargement
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -42,6 +50,8 @@ const EditNameRH = ({ currentName, onSave }) => {
       return;
     }
 
+    setLoading(true); // Activer l'état de chargement
+
     try {
       const response = await axios.put(
         "http://192.168.1.15:3000/rh/edit-name",
@@ -57,6 +67,8 @@ const EditNameRH = ({ currentName, onSave }) => {
     } catch (error) {
       console.error(error.response ? error.response.data : error);
       Alert.alert(t("error"), t("nameChangeError"));
+    } finally {
+      setLoading(false); // Désactiver l'état de chargement une fois la requête terminée
     }
   };
 
@@ -66,23 +78,27 @@ const EditNameRH = ({ currentName, onSave }) => {
       style={styles.background}
       source={require("../assets/a2.png")}
     >
-                              <ScrollView contentContainerStyle={styles.scrollView}>
-
-      <Screen style={styles.container}>
-        <AppForm
-          initialValues={{ name: currentName }}
-          onSubmit={handleNameChange}
-          validationSchema={validationSchema}
-        >
-          <AppFormField
-            autoCorrect={false}
-            icon="account"
-            name="name"
-            placeholder={t("name")}
-          />
-          <SubmitButton title={t("save")} />
-        </AppForm>
-      </Screen>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Screen style={styles.container}>
+          <AppForm
+            initialValues={{ name: currentName }}
+            onSubmit={handleNameChange}
+            validationSchema={validationSchema}
+          >
+            <AppFormField
+              autoCorrect={false}
+              icon="account"
+              name="name"
+              placeholder={t("name")}
+            />
+            <SubmitButton title={t("save")} />
+          </AppForm>
+          {loading && (
+            <Text>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </Text>
+          )}
+        </Screen>
       </ScrollView>
     </ImageBackground>
   );
@@ -91,12 +107,12 @@ const EditNameRH = ({ currentName, onSave }) => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    alignContent:"stretch",
+    alignContent: "stretch",
     justifyContent: "flex-start",
   },
   container: {
     padding: 10,
-    marginTop:290,
+    marginTop: 290,
   },
 });
 

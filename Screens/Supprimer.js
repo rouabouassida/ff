@@ -1,8 +1,9 @@
-import React from "react";
-import { StyleSheet, Alert ,ImageBackground,ScrollView} from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Alert, ImageBackground, ScrollView, ActivityIndicator } from "react-native";
 import * as Yup from "yup";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 
 import Screen from "../components/Screen";
 import AppForm from "../components/forms/AppForm";
@@ -14,6 +15,8 @@ const validationSchema = Yup.object().shape({
 });
 
 function Supprimer() {
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
   const { t } = useTranslation();
 
   const handleDelete = async (values) => {
@@ -23,12 +26,12 @@ function Supprimer() {
       t("confirmDeleteMessage", { email }),
       [
         {
-          text: "Non",
+          text: t("no"),
           onPress: () => console.log("Suppression annulée"),
           style: "cancel",
         },
         {
-          text: "Oui",
+          text: t("yes"),
           onPress: () => deleteEmployee(email),
         },
       ],
@@ -37,44 +40,51 @@ function Supprimer() {
   };
 
   const deleteEmployee = async (email) => {
+    setLoading(true);
     try {
-      const response = await axios.delete(
+      const response = await axios.put(
         `http://192.168.1.15:3000/user/supprimerEmploye?email=${email}`
       );
       console.log(response.data);
-      // Gérer toute action supplémentaire après la suppression réussie
+      Alert.alert(t("success"), t("deleteSuccessMessage"));
+      navigation.goBack();
     } catch (error) {
       console.error("Erreur lors de la suppression de l'employé :", error);
-      // Gérer les erreurs
+      if (error.response) {
+        Alert.alert(t("error"), `${t("deleteErrorMessage")} ${error.response.data}`);
+      } else {
+        Alert.alert(t("error"), t("networkErrorMessage"));
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <ImageBackground
-    blurRadius={10}
-    style={styles.background}
-    source={require("../assets/a2.png")}
-  >
-                    <ScrollView contentContainerStyle={styles.scrollView}>
-
-    <Screen style={styles.container}>
-      <AppForm
-        initialValues={{ email: "" }}
-        onSubmit={handleDelete}
-        validationSchema={validationSchema}
-      >
-        <AppFormField
-          autoCorrect={false}
-          icon="email"
-          name="email"
-          placeholder={t("emailPlaceholder")}
-          keyboardType="email-address"
-        />
-
-        <SubmitButton title={t("deleteEmployeeButton")} />
-      </AppForm>
-    </Screen>
-    </ScrollView></ImageBackground>
+    <ImageBackground blurRadius={10} style={styles.background} source={require("../assets/a2.png")}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <Screen style={styles.container}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <AppForm
+              initialValues={{ email: "" }}
+              onSubmit={handleDelete}
+              validationSchema={validationSchema}
+            >
+              <AppFormField
+                autoCorrect={false}
+                icon="email"
+                name="email"
+                placeholder={t("emailPlaceholder")}
+                keyboardType="email-address"
+              />
+              <SubmitButton title={t("deleteEmployeeButton")} />
+            </AppForm>
+          )}
+        </Screen>
+      </ScrollView>
+    </ImageBackground>
   );
 }
 
@@ -87,6 +97,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "stretch",
+  },
+  scrollView: {
+    flexGrow: 1,
+    justifyContent: "center",
   },
 });
 

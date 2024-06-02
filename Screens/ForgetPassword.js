@@ -7,7 +7,7 @@ import colors from "../config/colors";
 import AppButton from "../components/AppButton";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
-import { useTranslation } from "react-i18next"; // Importer la fonction useTranslation pour gérer les traductions
+import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 
 const validationSchema = Yup.object().shape({
@@ -16,7 +16,7 @@ const validationSchema = Yup.object().shape({
 
 function ForgetPassword(props) {
   const navigation = useNavigation();
-  const { t } = useTranslation(); // Utiliser la fonction useTranslation pour obtenir les traductions
+  const { t } = useTranslation();
 
   const handleSubmit = (values) => {
     axios
@@ -47,7 +47,7 @@ function ForgetPassword(props) {
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
-          {({ handleChange, handleSubmit, errors, touched }) => (
+          {({ handleChange, handleSubmit, setFieldTouched, errors, touched }) => (
             <>
               <AppTextInput
                 autoCapitalize="none"
@@ -62,7 +62,9 @@ function ForgetPassword(props) {
                 error={errors.email}
                 touched={touched.email}
               />
-              <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              {touched.email && errors.email && (
+                <AppText style={{ color: "red" }}>{errors.email}</AppText>
+              )}
               <Text style={styles.text}>
                 {t(
                   "Vous recevrez peut-etre des notifications de notre part sur votre boite mail et par texto à des fins de sécurité et de connexion"
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-start",
     alignContent:"stretch"
-
   },
   Entete: {
     fontSize: 30,
@@ -106,7 +107,6 @@ const styles = StyleSheet.create({
     color: colors.grisCalire,
     marginTop: 30,
     marginend:50,
-
   },
 });
 

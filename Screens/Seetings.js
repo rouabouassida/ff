@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Alert ,ImageBackground} from "react-native";
+import { View, StyleSheet, FlatList, TouchableOpacity, Alert, ImageBackground, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -39,7 +39,7 @@ const menuItems = [
   {
     title: "Change Language",
     icon: {
-      name: "account-tie-outline",
+      name: "translate",
       backgroundColor: colors.caramel,
     },
     screen: "ModifierLanguage",
@@ -50,10 +50,12 @@ function Seetings(props) {
   const { t } = useTranslation();
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
     const fetchFullname = async () => {
+      setLoading(true);
       try {
         const storedFullname = await AsyncStorage.getItem("fullname");
         if (storedFullname) {
@@ -61,12 +63,15 @@ function Seetings(props) {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchFullname();
 
     const fetchEmail = async () => {
+      setLoading(true);
       try {
         const storedEmail = await AsyncStorage.getItem("email");
         if (storedEmail) {
@@ -74,6 +79,8 @@ function Seetings(props) {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -101,6 +108,7 @@ function Seetings(props) {
           text: t("logoutConfirmationConfirm"),
           onPress: async () => {
             try {
+              setLoading(true);
               const res = await axios.post("http://192.168.1.15:3000/user/logout");
               if (res.status === 200) {
                 // Supprimez les données d'authentification stockées localement
@@ -118,6 +126,8 @@ function Seetings(props) {
               console.error("Erreur lors de la déconnexion", error);
               // Affichez un message d'erreur si la déconnexion échoue
               alert(t("logoutFailedMessage"));
+            } finally {
+              setLoading(false);
             }
           }
         }
@@ -127,45 +137,42 @@ function Seetings(props) {
   };
 
   return (
-    <ImageBackground
-    blurRadius={10}
-    style={styles.background}
-    source={require("../assets/a2.png")}>
-    <Screen style={styles.screen}>
-      <View style={styles.container}>
-        <ListItem
-          title={fullname}
-          subTitle={email}
-          image={require("../assets/utilisateur.png")}
-        />
-      </View>
-      <View style={styles.container}>
-        <FlatList
-          data={menuItems}
-          keyExtractor={(menuItem) => menuItem.title}
-          ItemSeparatorComponent={ListItemSeparator}
-          renderItem={({ item }) => (
-            <TouchableOpacity >
-              <ListItem
-              onPress={() => handleMenuItemPress(item.screen)}
-              title={t(item.title)}
-                IconComponent={
-                  <Icon
-                    name={item.icon.name}
-                    backgroundColor={item.icon.backgroundColor}
+    <ImageBackground blurRadius={10} style={styles.background} source={require("../assets/a2.png")}>
+        <Screen style={styles.screen}>
+          <View style={styles.container}>
+            <ListItem
+              title={fullname}
+              subTitle={email}
+              image={require("../assets/utilisateur.png")}
+            />
+          </View>
+          <View style={styles.container}>
+            <FlatList
+              data={menuItems}
+              keyExtractor={(menuItem) => menuItem.title}
+              ItemSeparatorComponent={ListItemSeparator}
+              renderItem={({ item }) => (
+                <TouchableOpacity >
+                  <ListItem
+                  onPress={() => handleMenuItemPress(item.screen)}
+                    title={t(item.title)}
+                    IconComponent={
+                      <Icon
+                        name={item.icon.name}
+                        backgroundColor={item.icon.backgroundColor}
+                      />
+                    }
                   />
-                }
-              />
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-      <ListItem
-        title={t("logoutTitle")}
-        IconComponent={<Icon name="logout" backgroundColor="#ffe66d" />}
-        onPress={handleLogout}
-      />
-    </Screen>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+          <ListItem
+            title={t("logoutTitle")}
+            IconComponent={<Icon name="logout" backgroundColor="#ffe66d" />}
+            onPress={handleLogout}
+          />
+        </Screen>
     </ImageBackground>
   );
 }
@@ -175,12 +182,14 @@ const styles = StyleSheet.create({
   },
   container: {
     marginVertical: 20,
-    
   },
   background: {
     flex: 1,
     justifyContent: "flex-start",
     alignContent:"stretch"
+  },
+  scrollView: {
+    flexGrow: 1,
   },
 });
 

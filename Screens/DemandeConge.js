@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   View,
+  ActivityIndicator,
 } from "react-native";
 import colors from "../config/colors";
 import * as Yup from "yup";
@@ -26,7 +27,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function DemandeConge({ navigation }) {
-  const { t } = useTranslation(); // Use the useTranslation hook
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
@@ -92,7 +93,7 @@ function DemandeConge({ navigation }) {
                   placeholder={t("endDatePlaceholder1")}
                 />
               
-                <View style={styles.pickerContainer}>
+              <View style={styles.pickerContainer}>
                   <Picker
                     selectedValue={values.typeConge}
                     onValueChange={(itemValue) =>
@@ -177,6 +178,7 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+    marginTop:20
   },
   title: {
     fontSize: 20,

@@ -63,7 +63,7 @@ const PointerRH = () => {
               style={styles.image}
             />
           </TouchableOpacity>
-          <Text style={styles.text}>{t("leaveManagement")}</Text>
+          <Text style={styles.text}>{t("leaveManagement1")}</Text>
         </View>
         <View style={styles.circleContainer}>
           <TouchableOpacity style={styles.circle4} onPress={() => handlePress("GererRemote")}>
@@ -72,7 +72,7 @@ const PointerRH = () => {
               style={styles.image}
             />
           </TouchableOpacity>
-          <Text style={styles.text}>{t("remote")}</Text>
+          <Text style={styles.text}>{t("remote1")}</Text>
         </View>
         <View style={styles.circleContainer}>
           <TouchableOpacity style={styles.circle5} onPress={() => handlePress("Seetings")}>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   addButton: {
     position: "absolute",
-    bottom: 10,
+    bottom: 45,
     right: 10,
     backgroundColor: colors.beige, // Changer la couleur selon vos besoins
     borderRadius: 30,
